@@ -3,11 +3,23 @@ import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
+import firebase from '../firebase/fire';
+
 
 const Signup = ({navigation}) => {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
+    const [error, setError] = useState();
+
+    const Register = async => {
+        try{
+            const response = firebase.auth().createUserWithEmailAndPassword(email,password);
+            navigation.navigate('Login');
+        }catch(err){
+            setError(err.message);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -41,7 +53,7 @@ const Signup = ({navigation}) => {
 
             <FormButton
                 buttonTitle="Sign Up"
-                onPress={() => register(email, password)}
+                onPress={() => Register()}
             />
 
             <View style={styles.textPrivate}>
@@ -81,7 +93,7 @@ const styles = StyleSheet.create({
       padding: 20,
     },
     text: {
-      fontFamily: 'Kufam-SemiBoldItalic',
+      fontFamily: 'sans-serif',
       fontSize: 28,
       marginBottom: 10,
       color: '#051d5f',
@@ -93,7 +105,7 @@ const styles = StyleSheet.create({
       fontSize: 18,
       fontWeight: '500',
       color: '#2e64e5',
-      fontFamily: 'Lato-Regular',
+      fontFamily: 'sans-serif',
     },
     textPrivate: {
       flexDirection: 'row',
@@ -104,7 +116,7 @@ const styles = StyleSheet.create({
     color_textPrivate: {
       fontSize: 13,
       fontWeight: '400',
-      fontFamily: 'Lato-Regular',
+      fontFamily: 'sans-serif',
       color: 'grey',
     },
   });

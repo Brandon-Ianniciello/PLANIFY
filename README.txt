@@ -11,3 +11,9 @@ npm install @react-navigation/native-stack
 npm install @react-native-async-storage/async-storage
 
 npm install --save react-native-vector-icons
+
+npm install --save @react-native-firebase/app
+
+npm install --save firebase
+
+expo install firebase
