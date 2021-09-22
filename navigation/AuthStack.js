@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import OnboardingScreen from '../screens/Onboarding';
 import SignupScreen from '../screens/SignupScreen'
 import LoginScreen from '../screens/LoginScreen';
+import HomeScreen from '../screens/HomeScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
@@ -46,6 +47,11 @@ const AuthStack = () => {
           <Stack.Screen 
             name="Signup"
             component={SignupScreen} 
+            options={{headerShown: false}}
+          />
+          <Stack.Screen 
+            name="HomeScreen"
+            component={HomeScreen} 
             options={{headerShown: false}}
           />
       </Stack.Navigator>

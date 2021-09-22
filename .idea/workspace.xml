@@ -2,13 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="db0c5c72-6905-4c5f-8cb5-17cf55cacddf" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/components/FormButton.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/FormButton.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/FormInput.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/FormInput.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/SocialButton.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/SocialButton.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/PLANIFY.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PLANIFY.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/LoginScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/LoginScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/SignupScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/SignupScreen.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

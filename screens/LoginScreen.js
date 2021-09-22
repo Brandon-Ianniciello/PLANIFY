@@ -11,10 +11,21 @@ import {
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
+import firebase from '../firebase/fire';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+
+  const Login = async => {
+    console.log("Button has been pressed");
+    try{
+        const response = firebase.auth().signInWithEmailAndPassword(email,password);
+        navigation.navigate('HomeScreen');
+    }catch(err){
+        setError(err.message);
+    }
+}
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -43,7 +54,7 @@ const LoginScreen = ({ navigation }) => {
 
       <FormButton
         buttonTitle="Sign In"
-        onPress={() => login(email, password)}
+        onPress={() => Login(email, password)}
       />
 
       {Platform.OS === 'android' ? (
