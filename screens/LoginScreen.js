@@ -12,10 +12,13 @@ import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import firebase from '../firebase/fire';
+import { AuthContext } from '../navigation/AuthProvider';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+
+  const { login } = useContext(AuthContext);
 
   const Login = async => {
     console.log("Button has been pressed");
@@ -54,7 +57,7 @@ const LoginScreen = ({ navigation }) => {
 
       <FormButton
         buttonTitle="Sign In"
-        onPress={() => Login(email, password)}
+        onPress={() => login(email, password)}
       />
 
       {Platform.OS === 'android' ? (

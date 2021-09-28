@@ -4,6 +4,7 @@ import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import firebase from '../firebase/fire';
+import { AuthContext } from '../navigation/AuthProvider';
 
 
 const Signup = ({navigation}) => {
@@ -11,6 +12,8 @@ const Signup = ({navigation}) => {
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
     const [error, setError] = useState();
+
+    const {register} = useContext(AuthContext)
 
     const Register = async => {
         try{
@@ -53,7 +56,7 @@ const Signup = ({navigation}) => {
 
             <FormButton
                 buttonTitle="Sign Up"
-                onPress={() => Register()}
+                onPress={() => register(email,password)}
             />
 
             <View style={styles.textPrivate}>
