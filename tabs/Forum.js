@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
+import Header from '../components/Header';
+
 const forum = () => {
     return (
-        <View style={styles.container}>
-            <Text>
-                FORUM
-            </Text>
+        <View>
+            <Header title="forum"/>
             <FlatList>
 
             </FlatList>

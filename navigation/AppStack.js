@@ -11,40 +11,64 @@ import IdéeDateScreen from "../screens/IdéeDateScreen";
 import RestaurantScreen from "../screens/RestaurantScreen";
 import PartyScreen from "../screens/PartyScreen";
 
+import Header from "../components/Header";
+
+function headerManager(title){
+    return(
+        {
+            headerStyle: {
+                backgroundColor: "black"
+            },
+            headerTitleStyle: {
+                fontWeight: 'bold',
+                textTransform: "uppercase",
+                color: "white"
+            },
+            title:title
+        }
+    )
+}
+
 const App = createStackNavigator();
 
 const AppStack = () => {
     return (
         <App.Navigator styles={styles.container}>
             <App.Screen
-             name="HomeScreen"
-             component={HomeScreen}
-             options={{headerShown: false}}
+                name="HomeScreen"
+                component={HomeScreen}
+                options={{ headerShown: false }}
             />
             <App.Screen
-             name="sportsScreen"
-             component={sportsScreen}
+                name="sportsScreen"
+                component={sportsScreen}
+                options={headerManager("Sports")}
             />
             <App.Screen
-             name="AttractionScreen"
-             component={AttractionScreen}
+                name="AttractionScreen"
+                component={AttractionScreen}
+                options={headerManager("Attractions")}
             />
             <App.Screen
-             name="FestivalsScreen"
-             component={FestivalsScreen}
+                name="FestivalsScreen"
+                component={FestivalsScreen}
+                options={headerManager("Festivals")}
             /><App.Screen
-             name="IdéeDateScreen"
-             component={IdéeDateScreen}
+                name="IdéeDateScreen"
+                component={IdéeDateScreen}
+                options={headerManager("Idées de sorties amoureures")}
             />
             <App.Screen
-             name="RestaurantScreen"
-             component={RestaurantScreen}
+                name="RestaurantScreen"
+                component={RestaurantScreen}
+                options={headerManager("Restaurants")}
             />
-             <App.Screen
-             name="PartyScreen"
-             component={PartyScreen}
+            <App.Screen
+                name="PartyScreen"
+                component={PartyScreen}
+                options={headerManager("Partys")}
             />
-            
+
         </App.Navigator>
     )
 }

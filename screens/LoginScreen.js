@@ -18,25 +18,24 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
-  const { login } = useContext(AuthContext);
+  const { login,errorLogin } = useContext(AuthContext);
 
-  const Login = async => {
-    console.log("Button has been pressed");
-    try{
-        const response = firebase.auth().signInWithEmailAndPassword(email,password);
-        navigation.navigate('HomeScreen');
-    }catch(err){
-        setError(err.message);
-    }
-}
+  let champErreur = null
 
+  if(errorLogin == null)
+    champErreur = <View></View>
+  else if (errorLogin != null)
+    champErreur = <View><Text style={{color:"red",  fontSize: 15  }}>{errorLogin.toString()}</Text></View>
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
         source={require('../assets/logo.png')}
         style={styles.logo}
       />
-
+      
+      <View>
+        {champErreur}
+      </View>
       <FormInput
         labelValue={email}
         onChangeText={(userEmail) => setEmail(userEmail)}

@@ -10,16 +10,6 @@ const IdéesDateScreen = () => {
             <FlatList>
 
             </FlatList>
-
-            {/* <FlatList data={truckList} extraData={initialState}
-          keyExtractor={item => item.id} renderItem={({ item }) => {
-            return (
-              <SearchDisplay data={item} action={() => {
-                fetchTruckId(item['id'], navigation); Update()
-              }} />
-            )
-          }}>
-        </FlatList> */}
         </View>
     )
 }

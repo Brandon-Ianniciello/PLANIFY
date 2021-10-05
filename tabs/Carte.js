@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import MapView, { Polygon, Polyline, Marker } from 'react-native-maps';
-
+import Header from '../components/Header';
 const initialRegion = {
     longitude: -73.8446587,
     latitude: 45.6422237,
@@ -11,10 +11,14 @@ const initialRegion = {
 
 const carte = () => {
     return (
-        <MapView
-            style={styles.mapStyle}
-            initialRegion={initialRegion}>
-        </MapView>
+        <View>
+            <Header title="carte" />
+            <MapView
+                style={styles.mapStyle}
+                initialRegion={initialRegion}>
+            </MapView>
+        </View>
+
     )
 }
 

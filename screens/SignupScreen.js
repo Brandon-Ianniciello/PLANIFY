@@ -11,18 +11,15 @@ const Signup = ({navigation}) => {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
-    const [error, setError] = useState();
 
-    const {register} = useContext(AuthContext)
+    const {register,errorRegister} = useContext(AuthContext)
 
-    const Register = async => {
-        try{
-            const response = firebase.auth().createUserWithEmailAndPassword(email,password);
-            navigation.navigate('Login');
-        }catch(err){
-            setError(err.message);
-        }
-    }
+    let champErreur = null
+
+    if(errorRegister == null)
+      champErreur = <View></View>
+    else if (errorRegister != null)
+      champErreur = <View><Text style={{color:"red",  fontSize: 15  }}>{errorRegister.toString()}</Text></View>
 
     return (
         <View style={styles.container}>
@@ -53,6 +50,9 @@ const Signup = ({navigation}) => {
                 iconType="lock"
                 secureTextEntry={true}
             />
+            <View>
+                {champErreur}
+            </View>
 
             <FormButton
                 buttonTitle="Sign Up"
