@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput,KeyboardAvoidingView } from 'react-native';
 import Textarea from 'react-native-textarea';
 import * as firebase from 'firebase';
 import { AuthContext } from '../navigation/AuthProvider';
@@ -37,7 +37,7 @@ const AddEventScreen = ({navigation}) => {
     }
     
     return (
-        <View style={styles.container}>
+        <View style={styles.container} behavior="height">
             {/* Titre de l'event */}
             <View style={styles.action}>
                 <TextInput
@@ -73,11 +73,11 @@ export default AddEventScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
+        backgroundColor: '#fff'
     },
     bouton: {
         backgroundColor: "#00a46c",
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 15,
         color: 'white',
@@ -97,19 +97,19 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#dadada',
+        borderBottomColor: '#dcdcdc',
         paddingBottom: 5,
         paddingLeft: 10,
         paddingRight: 10
     },
     textarea: {
         textAlignVertical: 'top',
-        height: 170,
+        height: 100,
         fontSize: 14,
         color: '#333',
     },
     textareaContainer: {
-        height: 180,
+        height: 140,
         padding: 5,
         backgroundColor: '#F5FCFF',
       }

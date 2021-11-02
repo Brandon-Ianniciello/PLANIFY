@@ -24,25 +24,18 @@ const forum = ({ navigation }) => {
   }, []);
 
   return (
-    <ScrollView style={{ backgroundColor: "#5cdb95" }}>
+    <ScrollView style={{ backgroundColor: "#dcdcdc" }}>
       <View style={{
-        backgroundColor: "#5cdb95", height: "7%", borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20, paddingHorizontal: 20
+        backgroundColor: "dcdcdc", height: "10%", borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20, width:'100%',marginTop:20
       }}>
-        <Image
-          source={require('../assets/1.png')}
-          style={{
-            height: 10,
-            width: 20,
-            marginTop: 50
-          }}
-        />
-        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10, width: "100%" }}>
+        <Button title="Ajouter un evenement" onPress={() => navigation.navigate("AddEventScreen")}></Button>
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10, width: "100%",paddingHorizontal: 20, }}>
           {/* Texte d'accueil du forum */}
-          <View style={{ width: "50%", backgroundColor: "#5cdb95" }}>
+          <View style={{ width: "50%", backgroundColor: "#dcdcdc" }}>
             <Text style={{
               fontSize: 28,
-              color: "#edf5e1",
+              color: "#141823",
               fontWeight: "bold"
             }}>
               Bienvenue sur le forum de Planify
@@ -56,6 +49,7 @@ const forum = ({ navigation }) => {
             />
           </View>
         </View>
+        
 
         {/* Bouton pour ajouter un évènement */}
         {/* <TouchableOpacity style={styles.bouton}
@@ -68,7 +62,6 @@ const forum = ({ navigation }) => {
           <FlastListEvent data={ajouts} navigation={navigation} nomPage="Forum" />
         </View>
       </View>
-      <Button title="+" onPress={() => navigation.navigate("AddEventScreen")}></Button>
     </ScrollView>
   )
 }

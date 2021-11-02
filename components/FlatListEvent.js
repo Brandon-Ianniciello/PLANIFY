@@ -16,20 +16,22 @@ const Event = ({ item, navigation, nomPage }) => {
         <View style={styles.item}>
             <View style={{ flexDirection: 'column' }}>
                 {/* titre */}
-                <View style={{flexDirection:'row'}}>
+                <View style={{flexDirection:'row', width:'100%', borderBottomColor:'#dcdcdc', borderBottomWidth:1,}}>
                     <Text style={styles.titre}>{item.nom}</Text>
                     {/* Bouton pour lenlever' */}
-                    <TouchableOpacity style={styles.boutonDelete} onPress={()=>console.log("delete",item.nom)}>
+                    {/* <TouchableOpacity style={styles.boutonDelete} onPress={()=>console.log("delete",item.nom)}>
                         <Text>🗑️</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 {/* description */}
-                <View style={{ flexDirection: 'row' }}>
-                    <Text>
+                <View style={{ flexDirection: 'row',paddingLeft:20,paddingTop:10,paddingBottom:10,width:'100%' }}>
+                    <Text >
                         {description}
                     </Text>
                 </View>
-                <EventButton navigation={navigation} item={item} nomPage={nomPage} />
+                <View style={{borderTopColor:'#dcdcdc',borderTopWidth:1}}>
+                    <EventButton navigation={navigation} item={item} nomPage={nomPage} />
+                </View>
             </View>
         </View>
     )
@@ -70,18 +72,23 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        width:'100%'
     },
     liste: {
         flexDirection: "column"
     },
     titre:{
-        fontSize:35
+        fontSize:30,
+        paddingLeft:5
     },
     item:{
         borderColor:'black',
-        margin:'5%',
-        flexDirection:'row'
+        margin:0,
+        marginTop:15,
+        flexDirection:'row',
+        backgroundColor: 'white',
+        width:'100%'
     },
     boutonDelete: {
         backgroundColor: "red",

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet,Button } from 'react-native';
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -10,12 +10,12 @@ function headerManager(title){
     return(
         {
             headerStyle: {
-                backgroundColor: "black"
+                backgroundColor: "#fff"
             },
             headerTitleStyle: {
                 fontWeight: 'bold',
                 textTransform: "uppercase",
-                color: "white"
+                color: "#141823"
             },
             title:title
         }
@@ -35,7 +35,7 @@ const AppStack = () => {
             <Forum.Screen
                 name="AddEventScreen"
                 component={AddEventScreen}
-                options={headerManager("Ajout d'un Planify")}
+                options={{headerTitle: "Ajout d'un Planify"}}
             />
 
         </Forum.Navigator>
