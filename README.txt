@@ -17,3 +17,16 @@ npm install --save @react-native-firebase/app
 npm install --save firebase
 
 expo install firebase
+
+expo install react-native-svg
+
+npm i styled-system
+
+npm install --save styled-components
+
+npm install use-theme
+
+npm install native-base@2.15.2 --force
+
+npm install --save react-native-textarea
+

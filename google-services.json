@@ -7,7 +7,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:15638435625:android:7d17598ad76f44cc500938",
+        "mobilesdk_app_id": "1:15638435625:android:66193b83b07990ac500938",
         "android_client_info": {
           "package_name": "com.PLANIFY"
         }
@@ -29,6 +29,49 @@
             {
               "client_id": "15638435625-s33fi96h3u6qtdo7rr0gn1fdr2cvn1tl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "15638435625-u87dss8ho0ph1jbr9grvlai44rda3m6l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Planify"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15638435625:android:02330dad6607d620500938",
+        "android_client_info": {
+          "package_name": "com.myApp.PLANIFY"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15638435625-s33fi96h3u6qtdo7rr0gn1fdr2cvn1tl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8VD0YsJikZqQrqn4ize5IwcqVILvoDGo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15638435625-s33fi96h3u6qtdo7rr0gn1fdr2cvn1tl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "15638435625-u87dss8ho0ph1jbr9grvlai44rda3m6l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Planify"
+              }
             }
           ]
         }

@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+
+import GetData from '../utils/GetData';
 
 import * as firebase from 'firebase';
 
-const FestivalsScreen = () => {
-  //Création de la base de données
-  const db = firebase.firestore();
-  const [festivals, setFestivals] = useState([])
-  const [isFetching, setIsFetching] = useState(false)
+import FlatListEvent from '../components/FlatListEvent';
 
-  /*--aller chercher tout les festivals--*/
+const FestivalsScreen = ({ navigation }) => {
+  //Création de la base de données
+  const [festivals, setFestivals] = useState([])
+
   const getFestivals = async () => {
+    const db = firebase.firestore();
     const response = db.collection('Festivals');
     const data = await response.get();
-    setIsFetching(true)
+    let F = []
     data.docs.forEach(item => {
-      setFestivals([...festivals, item.data()])
-      setIsFetching(true)
+      F.push(item.data())
     })
-    setIsFetching(false)
+    setFestivals(F)
   }
 
   useEffect(() => {
@@ -26,37 +27,17 @@ const FestivalsScreen = () => {
     getFestivals()
   }, []);
 
-  if (!isFetching) {
+  if (festivals != undefined || festivals != null) {
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <ActivityIndicator animating={isFetching} />
-          <View style={styles.listeFestivals}>
-
-            <FlatList
-              data={festivals}
-              keyExtractor={item => item.id}
-              renderItem={({ item }) => {
-                return (
-                  <View>
-                    <Text>{item.id.toString()}. {item.nom} en {item.ville}</Text>
-                  </View>
-                )
-              }
-              }
-            >
-            </FlatList>
-          </View>
-        </View>
-      </ScrollView>
+      <View>
+        <FlatListEvent data={festivals} navigation={navigation} nomPage={"FestivalsScreen"} />
+      </View>
     )
   }
-  else if (isFetching || festivals == undefined) {
+  else if (festivals == undefined || festivals == null) {
     return (
       <View style={styles.container}>
-        <Text>
-          AUCUN FESTIVALS TROUVÉS
-        </Text>
+        <ActivityIndicator animating={true} color="black" size="large" />
       </View>
     )
   }
@@ -70,8 +51,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
-  },
-  listeFestivals: {
-    flexDirection: "column"
   }
 });

@@ -5,22 +5,60 @@ import { View, Text, Image, ImageBackground, StyleSheet } from 'react-native'
 import { TextInput, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import Header from '../components/Header';
+function divGenerator(screenName, nom, navigation, img) {
+    img = img.toString()
+    return (
+        <View>
+            <View style={{ flexDirection: "row", paddingHorizontal:20, width: "100%", alignItems: "center" }}>
+                <View style={{ width: "50%" }}>
+                    <Text style={{ fontWeight: "bold", fontSize: 17, color: "#585a61" }}>{nom}</Text>
+                    <View style={{
+                        height: 4,
+                        backgroundColor: "b1e5d3",
+                        width: 115,
+                        marginTop: -5
+                    }}>
+                    </View>
+                </View>
+
+            </View>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 300 }}>
+                <LinearGradient
+                    colors={["rgba(0,210,109,0.09)", "transparent"]}
+                    style={{ position: "absolute", left: 0, right: 0, height: 100, marginTop: 220, top: 0 }} />
+                <TouchableOpacity
+                    onPress={() => navigation.navigate(screenName)}
+                    style={{
+                        height: 240,
+                        elevation: 2,
+                        backgroundColor: "#FFF",
+                        marginLeft: 20,
+                        marginTop: 20,
+                        borderRadius: 15,
+                        marginBottom: 10,
+                        width: 160
+                    }}
+                >
+                    <Image
+                        source={require('../assets/festivals3.jpg')}
+                        //source={require(img)}
+                        //ne s'affiche pas quand on utilise la variable img
+                        style={{ borderTopRightRadius: 15, borderTopLeftRadius: 15 }}
+                    />
+
+                </TouchableOpacity>
+            </ScrollView>
+        </View>
+    )
+}
+
 const HomeScreen = ({ navigation }) => {
     const { user, logout } = useContext(AuthContext);
 
     return (
-        <View style={{
-            backgroundColor: "#fff",
-            flex: 1
-        }}>
-            <View style={{
-                backgroundColor: "#5cdb95",
-                height: "28%",
-                borderBottomLeftRadius: 20,
-                borderBottomRightRadius: 20,
-                paddingHorizontal: 20
-            }}>
+        <ScrollView style={{ backgroundColor: "#fff" }}>
+            <View style={{ backgroundColor: "#5cdb95", height: "7%", borderBottomLeftRadius: 20, borderBottomRightRadius: 20, paddingHorizontal: 20 }}>
                 <Image
                     source={require('../assets/1.png')}
                     style={{
@@ -50,15 +88,10 @@ const HomeScreen = ({ navigation }) => {
                     </View>
                 </View>
             </View>
+
             <LinearGradient
                 colors={["rgba(0,210,109,0.4)", "transparent"]}
-                style={{
-                    left: 0,
-                    right: 0,
-                    height: 90,
-                    marginTop: -15
-                }}
-            >
+                style={{ left: 0, right: 0, height: 90, marginTop: -10 }}>
                 <View style={{
                     backgroundColor: "#fff",
                     paddingVertical: 8,
@@ -71,180 +104,44 @@ const HomeScreen = ({ navigation }) => {
                 }}>
                     <TextInput
                         placeholder="Recherche"
-                        placeholderTextColor="b1e5d"
-                        style={{
-                            fontWeight: "bold",
-                            fontSize: 18,
-                            width: 320
-                        }}
-                    />
+                        placeholderTextColor="gray"
+                        style={{ fontWeight: "bold", fontSize: 18, width: 320 }} />
                     <Image
                         source={require('../assets/Loop.png')}
                         style={{ height: 20, width: 20 }}
                     />
                 </View>
             </LinearGradient>
-                <View style={{
-                    flexDirection: "row",
-                    paddingHorizontal: 20,
-                    width: "100%",
-                    alignItems: "center"
-                }}>
-                    <View style={{width:"50%"}}>
-                        <Text style={{
-                            fontWeight:"bold",
-                            fontSize:17,
-                            color:"#585a61"
-                        }}>Festivals</Text>
-                        <View style={{
-                            height:4,
-                            backgroundColor:"b1e5d3",
-                            width:115,
-                            marginTop:-5
-                        }}>
-
-                        </View>
-
-                    </View>
-                    <View style={{width:"50%",alignItems:"flex-end"}}>
-                        <View style={{
-                            backgroundColor:"#00a46c",
-                            paddingHorizontal:20,
-                            paddingVertical:5,
-                            borderRadius:15
-                        }}>
-                            <Text style={{
-                                fontWeight:"bold",
-                                color:"#FFF"
-                            }}>
-                                More
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-                
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={{height:400}}
-                >
-                    <LinearGradient
-                        colors={["rgba(0,210,109,0.09)", "transparent"]}
-                        style={{
-                            position:"absolute",
-                            left:0,
-                            right:0,
-                            height:100,
-                            marginTop:220,
-                            top:0
-                        }}
-                    />
-                    <TouchableOpacity
-                        onPress={()=>navigation.navigate("FestivalsScreen")}
-                        style={{
-                            height:240,
-                            elevation:2,
-                            backgroundColor:"#FFF",
-                            marginLeft:20,
-                            marginTop:20,
-                            borderRadius:15,
-                            marginBottom:10,
-                            width:160
-                        }}
-                    >
-                        <Image
-                            source={require('../assets/festivals3.jpg')}
-                            style={{borderTopRightRadius:15,borderTopLeftRadius:15}}
-                        />
-
-                    </TouchableOpacity>
-                </ScrollView>
-
-                
-                <View style={{
-                    flexDirection: "row",
-                    paddingHorizontal: 20,
-                    width: "100%",
-                    alignItems: "center"
-                }}>
-                    <View style={{width:"50%"}}>
-                        <Text style={{
-                            fontWeight:"bold",
-                            fontSize:17,
-                            color:"#585a61"
-                        }}>Activiter</Text>
-                        <View style={{
-                            height:4,
-                            backgroundColor:"b1e5d3",
-                            width:115,
-                            marginTop:-5
-                        }}>
-
-                        </View>
-
-                    </View>
-                    <View style={{width:"50%",alignItems:"flex-end"}}>
-                        <View style={{
-                            backgroundColor:"#00a46c",
-                            paddingHorizontal:20,
-                            paddingVertical:5,
-                            borderRadius:15
-                        }}>
-                            <Text style={{
-                                fontWeight:"bold",
-                                color:"#FFF"
-                            }}>
-                                More
-                            </Text>
-                        </View>
-                    </View>
-                </View>
             
-        </View>
+            <View>
+                {/* FESTIVALS */}
+                <View>
+                    {divGenerator("FestivalsScreen", "FESTIVALS", navigation, '../assets/festivals3.jpg')}
+                </View>
+                {/* RESTAURANTS */}
+                <View>
+                    {divGenerator("RestaurantScreen", "RESTAURANTS", navigation, '../assets/festivals.jpg')}
+                </View>
+                {/* PARTYS */}
+                <View>
+                    {divGenerator("PartyScreen", "PARTYS", navigation, '../assets/festivals3.jpg')}
+                </View>
+                {/* DATE */}
+                <View>
+                    {divGenerator("IdéeDateScreen", "RENCARDS", navigation, '../assets/festivals3.jpg')}
+                </View>
+                {/* ATTRACTIONS */}
+                <View>
+                    {divGenerator("AttractionScreen", "ATTRACTIONS", navigation, '../assets/festivals3.jpg')}
+                </View>
+                {/* SPORTS */}
+                <View>
+                    {divGenerator("sportsScreen", "SPORTS", navigation, '../assets/festivals3.jpg')}
+                </View>
+            </View>
+        </ScrollView>
     )
 }
-
-// const HomeScreen = ({ navigation }) => {
-//     const Stack = createNativeStackNavigator();
-//     const { user, logout } = useContext(AuthContext);
-
-//     return (
-//         <SafeAreaView>
-//             <Header title="ACCUEIL" />
-//             <View style={styles.container}>
-//                 <Text>Ready to explore {user.email} ?</Text>
-//                 <View style={{ flex: 1, flexDirection: 'column' }}>
-//                     <View style={styles.container}>
-//                         <View style={styles.rangée}>
-//                             <View style={styles.bouton}>
-//                                 <FormButton buttonTitle='SPORTS' onPress={() => navigation.navigate("sportsScreen")} />
-//                             </View>
-//                             <View style={styles.bouton}>
-//                                 <FormButton buttonTitle='RESTAURANTS' onPress={() => navigation.navigate("RestaurantScreen")} />
-//                             </View>
-//                         </View>
-//                         <View style={styles.rangée}>
-//                             <View style={styles.bouton}>
-//                                 <FormButton buttonTitle='FESTIVALS' onPress={() => navigation.navigate("FestivalsScreen")} />
-//                             </View>
-//                             <View style={styles.bouton}>
-//                                 <FormButton buttonTitle='PARTYS' onPress={() => navigation.navigate("PartyScreen")} />
-//                             </View>
-//                         </View>
-//                         <View style={styles.rangée}>
-//                             <View style={styles.bouton}>
-//                                 <FormButton buttonTitle='ATTRACTIONS' onPress={() => navigation.navigate("AttractionScreen")} />
-//                             </View>
-//                             <View style={styles.bouton}>
-//                                 <FormButton buttonTitle='RENCARD ♥' onPress={() => navigation.navigate("IdéeDateScreen")} />
-//                             </View>
-//                         </View>
-//                     </View>
-//                 </View>
-//             </View>
-//         </SafeAreaView>
-//     )
-// }
 
 export default HomeScreen;
 

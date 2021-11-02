@@ -1,120 +1,216 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image } from 'react-native';
+import React, { useContext, useState, useEffect } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, View, Text, Image, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
+import Header from "../components/Header";
 import { AuthContext } from '../navigation/AuthProvider';
-// import firebase from '../firebase/fire';
-import { getDatabase, ref, set } from "firebase/database";
-
 import FormButton from '../components/FormButton';
-import FormInput from '../components/FormInput';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useTheme } from 'react-native-paper';
+import Feather from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-// function writeUserData(userId, name, email, imageUrl, phone) {
-//     const db = getDatabase();
-//     set(ref(db, 'users/' + userId), {
-//         displayName: name,
-//         email: email,
-//         photoURL: imageUrl,
-//         phoneNumber: phone
-//     });
-// }
+import * as firebase from 'firebase';
 
-function formInputGenerator(labelValue, f, placeholderText, iconType, keyboardType, autoCapitalize, autoCorrect) {
-    return (
-        <FormInput
-            labelValue={labelValue}
-            onChangeText={(data) => f(data)}
-            placeholderText={placeholderText}
-            iconType={iconType}
-            keyboardType={keyboardType}
-            autoCapitalize={autoCapitalize}
-            autoCorrect={autoCorrect}
-        />
-    )
-}
+const url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
-const profil = () => {
-    /*USER AND HIS LOGOUT*/
+const Profil = () => {
     const { user, logout } = useContext(AuthContext);
+    const { colors } = useTheme();
 
-    /*CONSTANTES*/
-    const informations = []
+    const [userInfo, setUserInfo] = useState()
 
-    //Mettre les informations dans le tableau
-    user['providerData'].forEach(element => {
-        informations.push(element)
-    });
+    const getUserInfo = () => {
+        const db = firebase.firestore();
 
-    const [emailDéfinitif, setEmail] = useState(informations[0]['email']);
-    const [password, setPassword] = useState();
-    const [num, setNum] = useState(informations[0]['phoneNumber'])
-    const [name, setName] = useState(informations[0]["displayName"])
+        const ref = db.collection("users").doc(user.uid);
 
-    let emailDisplay = formInputGenerator(emailDéfinitif, setEmail, "Email", "user", "email-address", "none", false)
-    let phoneDisplay = formInputGenerator(num, setNum, "Numéro de téléphone", "phone", "phone-pad", "none", false)
-    let displayName = formInputGenerator(name, setName, "Nom", "profile", "default", "none", false)
+        ref.get().then((doc) => {
+            setUserInfo(doc.data())
+        })
+    }
 
-    let url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+    useEffect(() => {
+        getUserInfo()
+        console.log(userInfo)
+    }, []);
 
-    /*--photo--*/
-    if (informations[0]['photoURL'] != null || informations[0]['photoURL'] != undefined)
-        url = informations[0]['photoURL']
     return (
-        <View style={{ flexDirection: "column" }}>
-            <View style={styles.header}>
-                <Image source={{ uri: url }} style={styles.photoDisplay} />     
-                                                                          {/*à changer pour le nom  */}
-                <Text style={{textTransform:"uppercase",color:"white"}}>{emailDéfinitif}</Text> 
-            </View>
-            <SafeAreaView>
-                <View style={styles.emailDisplay}>
-                    {emailDisplay}
+        <SafeAreaView style={styles.container}>
+            <Header title='Profile' />
+            <ScrollView showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 30 }}>
+
+                <View style={styles.profileInfos}>
+                    <Image style={styles.image} source={{ uri: url }} />
+                    <View style={styles.name}>
+                        <Text style={styles.nameChar}>Name Name</Text>
+                        <Text style={styles.email}>{user.email}</Text>
+                        <TouchableOpacity style={styles.logoutButton} onPress={() => logout()}>
+                            <Text style={styles.panelButtonTitle}>Logout</Text>
+                        </TouchableOpacity>
+                        
+                    </View>
                 </View>
 
-                <View style={styles.phoneDisplay}>
-                    {phoneDisplay}
+                <View style={styles.action}>
+                    <FontAwesome name="user-o" color={colors.text} size={20} style={{ marginBottom: 5}}/>
+                    <TextInput
+                        placeholder={"à remplacer par le nom wesh"}
+                        placeholderTextColor="#666666"
+                        autoCorrect={false}
+                        style={[
+                            styles.textInput,
+                            {
+                                color: colors.text,
+                            },
+                        ]}
+                    />
                 </View>
-
-                <View>
-                    {displayName}
+                
+                <View style={styles.action}>
+                    <FontAwesome name="user-o" color={colors.text} size={20} style={{ marginBottom: 5}}/>
+                    <TextInput
+                        placeholder="Last Name"
+                        placeholderTextColor="#666666"
+                        autoCorrect={false}
+                        style={[
+                            styles.textInput,
+                            {
+                                color: colors.text,
+                            },
+                        ]}
+                    />
                 </View>
-
-                <View style={{ flexDirection: 'row' }}>
-                    <FormButton buttonTitle='Logout' onPress={() => logout()} />
+                <View style={styles.action}>
+                    <Feather name="phone" color={colors.text} size={20} style={{ marginBottom: 5}} />
+                    <TextInput
+                        placeholder="Phone"
+                        placeholderTextColor="#666666"
+                        keyboardType="number-pad"
+                        autoCorrect={false}
+                        style={[
+                            styles.textInput,
+                            {
+                                color: colors.text,
+                            },
+                        ]}
+                    />
                 </View>
-            </SafeAreaView>
-        </View>
+                <View style={styles.action}>
+                    <FontAwesome name="envelope-o" color={colors.text} size={20} style={{ marginBottom: 5}}/>
+                    <TextInput
+                        placeholder={user.email}
+                        placeholderTextColor="#666666"
+                        keyboardType="email-address"
+                        autoCorrect={false}
+                        style={[
+                            styles.textInput,
+                            {
+                                color: colors.text,
+                            },
+                        ]}
+                    />
+                </View>
+                <View style={styles.action}>
+                    <FontAwesome name="globe" color={colors.text} size={20} style={{ marginBottom: 5}}/>
+                    <TextInput
+                        placeholder="Country"
+                        placeholderTextColor="#666666"
+                        autoCorrect={false}
+                        style={[
+                            styles.textInput,
+                            {
+                                color: colors.text,
+                            },
+                        ]}
+                    />
+                </View>
+                <View style={styles.action}>
+                    <Icon name="map-marker-outline" color={colors.text} size={20} style={{ marginBottom: 5}}/>
+                    <TextInput
+                        placeholder="City"
+                        placeholderTextColor="#666666"
+                        autoCorrect={false}
+                        style={[
+                            styles.textInput,
+                            {
+                                color: colors.text,
+                            },
+                        ]}
+                    />
+                </View>
+                <TouchableOpacity style={styles.commandButton} onPress={() => { console.log("Submit has been pressed")}}>
+                    <Text style={styles.panelButtonTitle}>Submit</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </SafeAreaView>
     )
+
 }
 
-
-
-export default profil;
+export default Profil;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center'
+        backgroundColor: 'white'
     },
-    phoneDisplay: {
+    profileInfos: {
+        marginTop: 16,
+        paddingHorizontal: 30,
         flexDirection: 'row'
     },
-    emailDisplay: {
-        flexDirection: 'row'
+    image: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        borderColor: '#dddddd',
+        borderWidth: 1,
+        backgroundColor: '#dcdcdc'
     },
-    photoDisplay: {
-        width: 75,
-        height: 75,
-        borderRadius: 75 / 2,
-        overflow: "hidden",
-        borderWidth: 3,
-        borderColor: "red",
-        backgroundColor:"white"
+    name: {
+        marginLeft: 25,
+        marginTop: 30
     },
-    header:{
-        backgroundColor: "black",
-        height: 80,
+    nameChar: {
+        fontWeight: 'bold',
+        fontSize: 23
+    },
+    email: {
+        color: 'gray'
+    },
+    action: {
+        flexDirection: 'row',
+        marginTop: 20,
+        marginBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#dadada',
+        paddingBottom: 5,
+        paddingLeft: 10,
+        paddingRight: 10
+    },
+    textInput: {
+        flex: 1,
+        marginTop: Platform.OS === 'ios' ? 0 : -12,
+        paddingLeft: 10,
+        color: '#05375a',
+    },
+    commandButton: {
+        padding: 15,
+        borderRadius: 10,
+        backgroundColor: '#3EB489',
         alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection:"row"
-    }
-});
+        marginTop: 10,
+    },
+    panelButtonTitle: {
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: 'white',
+        textAlign: 'center'
+    },
+    logoutButton: {
+        backgroundColor: "#e88832",
+        width: 70,
+        borderRadius: 10,
+        marginLeft: 170,
+    },
+})

@@ -1,35 +1,52 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import * as firebase from 'firebase';
 
-const RestaurantScreen = () => {
+import EventButton from '../components/EventButton';
+import FlatListEvent from '../components/FlatListEvent';
+
+const RestaurantScreen = ({ navigation }) => {
+  const [restaurants, setRestaurants] = useState([])
+
+  /*--aller chercher tout les festivals--*/
+  const getRestaurants = async () => {
+    const db = firebase.firestore();
+    const response = db.collection('Restaurants');
+    const data = await response.get();
+
+    let R = []
+    data.docs.forEach(item => {
+      R.push(item.data())
+    })
+    setRestaurants(R)
+  }
+
+  useEffect(() => {
+    setRestaurants(null)
+    getRestaurants()
+  }, []);
+
+  if (restaurants != null || restaurants != undefined) {
     return (
-        <View style={styles.container}>
-            <Text>
-                RESTAURANTS
-            </Text>
-            <FlatList>
-
-            </FlatList>
-
-            {/* <FlatList data={truckList} extraData={initialState}
-          keyExtractor={item => item.id} renderItem={({ item }) => {
-            return (
-              <SearchDisplay data={item} action={() => {
-                fetchTruckId(item['id'], navigation); Update()
-              }} />
-            )
-          }}>
-        </FlatList> */}
-        </View>
+      <View style={styles.container}>
+        <FlatListEvent data={restaurants} nomPage={"RestaurantScreen"} navigation={navigation}/>
+      </View>)
+  }
+  else if (restaurants == null || restaurants == undefined) {
+    return(
+      <View>
+          <ActivityIndicator animating={true} color="black" size="large"/>
+      </View>
     )
+  }
 }
 
 export default RestaurantScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });

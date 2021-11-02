@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View,Image} from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Header = (props) => {
     return (
@@ -15,15 +16,17 @@ const styles = StyleSheet.create({
         height: 80,
         alignItems: 'center',
         justifyContent: 'center',
-        flexDirection:"row"
+        flexDirection:"row",
+        borderBottomLeftRadius:15,
+        borderBottomRightRadius:15
     },
 
     title:{
         color: "#05386b",
+        textTransform: 'uppercase',
         fontSize: 28,
-        fontWeight: '900',
-        textTransform: 'uppercase'
-    }
+        fontWeight:"bold"
+    },
 });
 
 export default Header;

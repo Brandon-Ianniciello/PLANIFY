@@ -14,18 +14,23 @@ import SocialButton from '../components/SocialButton';
 import firebase from '../firebase/fire';
 import { AuthContext } from '../navigation/AuthProvider';
 
+//facebook
+//https://planify-b6b2b.firebaseapp.com/__/auth/handler
+
+//Google
+
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
-  const { login,errorLogin } = useContext(AuthContext);
+  const { login,loginWithGoogle,errorLogin } = useContext(AuthContext);
 
   let champErreur = null
 
   if(errorLogin == null)
     champErreur = <View></View>
   else if (errorLogin != null)
-    champErreur = <View><Text style={{color:"red",  fontSize: 15  }}>{errorLogin.toString()}</Text></View>
+    champErreur = <View><Text style={{color:"red",  fontSize: 15  }}>{errorLogin.toString()}, Please retry</Text></View>
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
@@ -74,7 +79,7 @@ const LoginScreen = ({ navigation }) => {
             btnType="google"
             color="#de4d41"
             backgroundColor="#f5e7ea"
-            onPress={() => googleLogin()}
+            onPress={() => loginWithGoogle()}
           />
         </View>
       ) : null}
