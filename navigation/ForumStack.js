@@ -10,12 +10,12 @@ function headerManager(title){
     return(
         {
             headerStyle: {
-                backgroundColor: "black"
+                backgroundColor: "#fff"
             },
             headerTitleStyle: {
                 fontWeight: 'bold',
                 textTransform: "uppercase",
-                color: "white"
+                color: "#141823"
             },
             title:title
         }

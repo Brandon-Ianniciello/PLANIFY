@@ -22,6 +22,9 @@ const AddEventScreen = ({ navigation, route }) => {
     const [description, setDescription] = useState("")
     const { user, logout } = useContext(AuthContext);
 
+    const uid = user.uid;
+
+
     // let id = route.params.id
     // console.log(id)
     //Geolocation.getCurrentPosition(info => console.log(info));
@@ -33,7 +36,7 @@ const AddEventScreen = ({ navigation, route }) => {
     }
 
     function addEvent(titre, description, catégorie, user) {
-        console.log(user.uid)
+        console.log('test')
         const db = firebase.firestore();
         if (titre == "" || titre == undefined || titre == null) {
             alert("TITRE VIDE...🤔")
@@ -56,8 +59,8 @@ const AddEventScreen = ({ navigation, route }) => {
             nom: titre,
             Description: description,
             Date: new Date(),
-            User: user.uid,
-            Catégorie: catégorie
+            User: uid,
+            // Catégorie: "catégorie"
             //localisation:{longitude:,latitude} de son cell
         })
     }
