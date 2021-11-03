@@ -1,8 +1,4 @@
 import React, { createContext, useState } from 'react';
-import auth from '@react-native-firebase/auth';
-// import firebase from '../firebase/fire';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-
 import * as firebase from 'firebase';
 
 export const AuthContext = createContext();
@@ -11,10 +7,8 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [errorRegister, setErrorRegister] = useState(null);
     const [errorLogin, setErrorLogin] = useState(null)
+    const [errorLogout, setErrorLogout] = useState(null)
     const db = firebase.firestore();
-
-    //google
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
 
     return (
         <AuthContext.Provider
@@ -23,6 +17,7 @@ export const AuthProvider = ({ children }) => {
                 setUser,
                 errorLogin,
                 errorRegister,
+                errorLogout,
                 login: async (email, password) => {
                     try {
                         await firebase.auth().signInWithEmailAndPassword(email, password);
@@ -36,14 +31,19 @@ export const AuthProvider = ({ children }) => {
                 register: async (email, password) => {
                     try {
                         await firebase.auth().createUserWithEmailAndPassword(email, password).then(cred =>{
-                            return db.collection('users').doc(cred.user.uid).set({
-                                FirsName: '',
+                            let uid = cred.user.uid
+                            return db.collection('users').doc(uid).set({
+                                FirstName: '',
                                 LastName:'',
                                 Phone: '',
                                 Email:email,
                                 Country:'',
                                 City:'',
-                                Password:password                       
+                                Sex:'',
+                                Image:'',
+                                Password:password,
+                                isAdmin:false,
+                                id:uid              
                             })
                         })
                         console.log('account reegistered!')
@@ -56,22 +56,25 @@ export const AuthProvider = ({ children }) => {
                 logout: async () => {
                     try {
                         await firebase.auth().signOut();
+                        setErrorRegister(null)
                         console.log('Logout')
                     } catch (e) {
+                        setErrorLogout(e)
                         console.log(e);
                     }
-                },
-                loginWithGoogle: async () => {
-                    await firebase.auth().signInWithPopup(googleProvider)
-                        .then((result) => {
-                            const credential = GoogleAuthProvider.credentialFromResult(result);
-                            const token = credential.accessToken;
-                            const user = result.user;
-                            console.log(user)
-                        }).catch((error) => {
-                            console.log(error)
-                        });
                 }
+                // ,
+                // loginWithGoogle: async () => {
+                //     await firebase.auth().signInWithPopup(googleProvider)
+                //         .then((result) => {
+                //             const credential = GoogleAuthProvider.credentialFromResult(result);
+                //             const token = credential.accessToken;
+                //             const user = result.user;
+                //             console.log(user)
+                //         }).catch((error) => {
+                //             console.log(error)
+                //         });
+                // }
             }}
         >
             {children}

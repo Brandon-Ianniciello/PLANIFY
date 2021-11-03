@@ -4,8 +4,9 @@ import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-nat
 import GetData from '../utils/GetData';
 import * as firebase from 'firebase';
 import FlatListEvent from '../components/FlatListEvent';
+import PlanifyIndicator from "../components/PlanifyIndicator";
 
-const AttractionScreen = ({ navigation }) => {
+const AttractionScreen = ({ navigation,userInfo }) => {
   const [attractions, setAttractions] = useState([])
 
   const getAttractions = async () => {
@@ -25,20 +26,21 @@ const AttractionScreen = ({ navigation }) => {
     getAttractions()
   }, []);
 
+  console.log("U:",userInfo)
+  if(userInfo!=undefined){
+      userInfo = route.params.userInfo
+  }
+    
   if (attractions != undefined || attractions != null) {
     console.log(attractions)
     return (
       <View style={styles.container}>
-        <FlatListEvent navigation={navigation} nomPage={"AttractionScreen"} data={attractions} />
+        <FlatListEvent navigation={navigation} nomPage={"AttractionScreen"} data={attractions} userInfo={userInfo}/>
       </View>
     )
   }
   else if (attractions == undefined || attractions == null) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator animating={true} color="black" size="large" />
-      </View>
-    )
+    return (<PlanifyIndicator/>)
   }
 }
 

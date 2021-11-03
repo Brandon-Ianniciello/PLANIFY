@@ -4,9 +4,20 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-nativ
 import Textarea from 'react-native-textarea';
 import * as firebase from 'firebase';
 import { AuthContext } from '../navigation/AuthProvider';
-//import Geolocation from '@react-native-community/geolocation';
 
-const AddEventScreen = ({ navigation, route }) => {
+function editEvent(id,titre,description,catégorie,user) {
+    const db = firebase.firestore();
+    return db.collection('Ajouts').doc(id).set({
+        Description:description,
+        nom: titre,
+        Catégorie:catégorie,
+        Date: new Date(),
+        user: user.uid
+
+    })
+}
+
+const EditEventScreen = ({ route,navigation}) => {
     /*
         1.Titre de l'évènement
         2.Date
@@ -15,53 +26,21 @@ const AddEventScreen = ({ navigation, route }) => {
         5.image, facultatif
         6.Description
         7.Localisation
-        8.Catégorie
     */
     const [titre, setTitre] = useState("")
-    const [catégorie, setCatégorie] = useState("")
     const [description, setDescription] = useState("")
+    const [catégorie,setCatégorie] = useState("")
     const { user, logout } = useContext(AuthContext);
 
-    // let id = route.params.id
-    // console.log(id)
-    //Geolocation.getCurrentPosition(info => console.log(info));
-    function erase() {
+    const { id } = route.params
+
+    function erase(){
         setDescription("")
         setTitre("")
         setCatégorie("")
         navigation.navigate("Forum")
     }
-
-    function addEvent(titre, description, catégorie, user) {
-        console.log(user.uid)
-        const db = firebase.firestore();
-        if (titre == "" || titre == undefined || titre == null) {
-            alert("TITRE VIDE...🤔")
-            navigation.navigate("AddEventScreen")
-            return
-        }
-        else if (description == "" || description == undefined || description == null) {
-            alert("DESCRIPTION VIDE... 🤔")
-            navigation.navigate("AddEventScreen")
-            return
-        }
-        else if (catégorie == "" || catégorie == undefined || catégorie == null) {
-            alert("CATÉGORIE VIDE... 🤔")
-            navigation.navigate("AddEventScreen")
-            return
-        }
-
-        console.log(titre, " add in db")
-        return db.collection('Ajouts').doc(titre).set({
-            nom: titre,
-            Description: description,
-            Date: new Date(),
-            User: user.uid,
-            Catégorie: catégorie
-            //localisation:{longitude:,latitude} de son cell
-        })
-    }
-
+    
     return (
         <View style={styles.container}>
             {/* Titre de l'event */}
@@ -98,14 +77,14 @@ const AddEventScreen = ({ navigation, route }) => {
                 placeholderTextColor={'#c7c7c7'}
                 underlineColorAndroid={'transparent'}
             />
-            <TouchableOpacity style={styles.bouton} onPress={() => { addEvent(titre, description, user); erase() }}>
-                <Text>Ajouter</Text>
+            <TouchableOpacity style={styles.bouton} onPress={() => {editEvent(id,titre,description,catégorie, user);erase()}}>
+                <Text>Modifier</Text>
             </TouchableOpacity>
         </View>
     )
 }
 
-export default AddEventScreen;
+export default EditEventScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -149,5 +128,5 @@ const styles = StyleSheet.create({
         height: 180,
         padding: 5,
         backgroundColor: '#F5FCFF',
-    }
+      }
 })

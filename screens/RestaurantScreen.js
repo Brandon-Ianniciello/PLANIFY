@@ -4,6 +4,7 @@ import * as firebase from 'firebase';
 
 import EventButton from '../components/EventButton';
 import FlatListEvent from '../components/FlatListEvent';
+import PlanifyIndicator from "../components/PlanifyIndicator"
 
 const RestaurantScreen = ({ navigation }) => {
   const [restaurants, setRestaurants] = useState([])
@@ -33,10 +34,7 @@ const RestaurantScreen = ({ navigation }) => {
       </View>)
   }
   else if (restaurants == null || restaurants == undefined) {
-    return(
-      <View>
-          <ActivityIndicator animating={true} color="black" size="large"/>
-      </View>
+    return(<PlanifyIndicator/>
     )
   }
 }

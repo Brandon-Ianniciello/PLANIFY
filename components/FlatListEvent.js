@@ -1,44 +1,60 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-
+import React, { useContext, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Button, ActivityIndicator } from 'react-native';
+import * as firebase from 'firebase';
 import EventButton from './EventButton';
-const Event = ({ item, navigation, nomPage }) => {
-    /*--variables--*/
-    let localisation = ""
-    let description = ""
 
-    if (item.localisation != null || item.localisation != undefined)
-        localisation = item.localisation
-    if (item.Description != null || item.Description != undefined)
-        description = item.Description
-
-    return (
-        <View style={styles.item}>
-            <View style={{ flexDirection: 'column' }}>
-                {/* titre */}
-                <View style={{flexDirection:'row', width:'100%', borderBottomColor:'#dcdcdc', borderBottomWidth:1,}}>
-                    <Text style={styles.titre}>{item.nom}</Text>
-                    {/* Bouton pour lenlever' */}
-                    {/* <TouchableOpacity style={styles.boutonDelete} onPress={()=>console.log("delete",item.nom)}>
-                        <Text>🗑️</Text>
-                    </TouchableOpacity> */}
-                </View>
-                {/* description */}
-                <View style={{ flexDirection: 'row',paddingLeft:20,paddingTop:10,paddingBottom:10,width:'100%' }}>
-                    <Text >
-                        {description}
-                    </Text>
-                </View>
-                <View style={{borderTopColor:'#dcdcdc',borderTopWidth:1}}>
-                    <EventButton navigation={navigation} item={item} nomPage={nomPage} />
-                </View>
-            </View>
-        </View>
-    )
+const deleteEventById = async (id) => {
+    await firebase.firestore().collection("Ajouts").doc(id).delete();
+    return id;
 }
 
-const FlatListEvent = ({ data, navigation, nomPage }) => {
-    const D = data    
+const Event = ({ item, navigation, nomPage, id, userInfo }) => {
+    /*--variables--*/
+    let description = ""
+
+    if (item.Description != null || item.Description != undefined)
+        description = item.Description
+    else
+        description = ""
+        return (
+            <View style={styles.item}>
+                <View style={{ flexDirection: 'column' }}>
+                    {/* titre */}
+                    <View style={{flexDirection:'row', width:'100%', borderBottomColor:'#dcdcdc', borderBottomWidth:1,}}>
+                        <Text style={styles.titre}>{item.nom}</Text>
+                        <View style={{ flexDirection: 'row' }}>
+                {/* Bouton pour lenlever' */}
+                <TouchableOpacity style={styles.boutonCRUD} onPress={() => deleteEventById(id)}>
+                    <Text>🗑️</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.boutonCRUD} onPress={() => navigation.navigate("EditEventScreen", { id: item.nom })}>
+                    <Text>✎</Text>
+                </TouchableOpacity>
+            </View>
+                        {/* Bouton pour lenlever' */}
+                        {/* <TouchableOpacity style={styles.boutonDelete} onPress={()=>console.log("delete",item.nom)}>
+                            <Text>🗑️</Text>
+                        </TouchableOpacity> */}
+                    </View>
+                    {/* description */}
+                    <View style={{ flexDirection: 'row',paddingLeft:10,paddingTop:10,paddingBottom:10,width:'100%' }}>
+                        <Text >
+                            {description}
+                        </Text>
+                    </View>
+                    <View style={{borderTopColor:'#dcdcdc',borderTopWidth:1}}>
+                        <EventButton navigation={navigation} item={item} nomPage={nomPage} />
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
+const FlatListEvent = ({ data, navigation,userInfo, nomPage }) => {
+    const D = data
+    console.log("DAns la flatlist:",userInfo)
+    id = 1
+
     if (D != null || D != undefined) {
         return (
             <View style={styles.container}>
@@ -48,7 +64,7 @@ const FlatListEvent = ({ data, navigation, nomPage }) => {
                         keyExtractor={item => item.id}
                         renderItem={({ item }) => {
                             return (
-                                <Event item={item} navigation={navigation} nomPage={nomPage}/>
+                                <Event item={item} navigation={navigation} nomPage={nomPage} id={id++} userInfo={userInfo} />
                             )
                         }
                         }
@@ -57,12 +73,8 @@ const FlatListEvent = ({ data, navigation, nomPage }) => {
             </View>
         )
     }
-    else if (data == null || data == undefined) {
-        return (
-            <View style={styles.container}>
-                <Text>AUCUNS ÉVÈNEMENTS TROUVÉS</Text>
-            </View>
-        )
+    else if ((D == null || D == undefined) && (userInfo == null || userInfo == undefined)) {
+        return (<ActivityIndicator animating={true} color="black" size="large" />)
     }
 }
 
@@ -72,17 +84,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
-        width:'100%'
+        justifyContent: 'center'
     },
     liste: {
-        flexDirection: "column"
+        flexDirection: "column",
+        backgroundColor: '#dcdcdc'
     },
-    titre:{
-        fontSize:30,
+    titre: {
+        fontSize:25,
         paddingLeft:5
     },
-    item:{
+    item: {
         borderColor:'black',
         margin:0,
         marginTop:15,
@@ -90,13 +102,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         width:'100%'
     },
-    boutonDelete: {
-        backgroundColor: "red",
-        paddingHorizontal: 20,
-        paddingVertical: 5,
-        borderRadius: 15,
-        marginRight:45,
-        color: 'white',
-        alignItems: 'center'
+    boutonCRUD: {
+        paddingHorizontal: 2,
+        paddingVertical: 10,
+        marginRight: 45,
     }
 })

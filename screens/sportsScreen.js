@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import * as firebase from 'firebase';
 import FlatListEvent from '../components/FlatListEvent';
+import PlanifyIndicator from "../components/PlanifyIndicator";
 
 const sportsScreen = ({ navigation }) => {
   const db = firebase.firestore();
@@ -33,9 +34,7 @@ const sportsScreen = ({ navigation }) => {
     )
   } else if (sports == null || sports == undefined) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator animating={true} color="black" size="large" />
-      </View>
+      <PlanifyIndicator/>
     )
   }
 }

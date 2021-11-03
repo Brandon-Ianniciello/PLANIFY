@@ -30,3 +30,12 @@ npm install native-base@2.15.2 --force
 
 npm install --save react-native-textarea
 
+npm install react-native-google-places-autocomplete
+
+npm i -S @react-google-maps/api
+
+--------2021-11-01---------
+npm install @react-native-community/geolocation --save
+npm install react-native link @react-native-community/geolocation
+
+

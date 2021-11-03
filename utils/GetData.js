@@ -14,4 +14,5 @@ getEvent = async (tableName) => {
     return tab
 }
 
+
 export default getEvent;
