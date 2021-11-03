@@ -20,15 +20,15 @@ const Profil = () => {
     const [userInfo, setUserInfo] = useState()
 
     //informations utilisateurs
-    const [City, setCity] = useState(undefined)
-    const [Country, setCountry] = useState(undefined)
-    const [Email, setEmail] = useState(undefined)
-    const [lastName, setLastName] = useState(undefined)
-    const [firstName, setFirstName] = useState(undefined)
-    const [imageProfil, setImageProfil] = useState(undefined)
-    const [password, setPassword] = useState(undefined)
-    const [phone, setPhone] = useState(undefined)
-    const [sex, setSex] = useState(undefined)
+    const [City, setCity] = useState("")
+    const [Country, setCountry] = useState("")
+    const [Email, setEmail] = useState(user.email)
+    const [lastName, setLastName] = useState("")
+    const [firstName, setFirstName] = useState("")
+    const [imageProfil, setImageProfil] = useState("")
+    const [password, setPassword] = useState("")
+    const [phone, setPhone] = useState("")
+    const [sex, setSex] = useState("")
     const db = firebase.firestore();
 
     const getUserInfo = () => {
@@ -77,6 +77,8 @@ const Profil = () => {
     useEffect(() => {
         getUserInfo()
     }, []);
+
+    console.log(user.uid)
 
     if (userIsNotNull() && userInfo != undefined) {
         let placeholderEmail = "Email"
