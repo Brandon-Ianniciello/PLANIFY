@@ -4,7 +4,7 @@ import * as firebase from 'firebase';
 import FlatListEvent from '../components/FlatListEvent';
 import PlanifyIndicator from "../components/PlanifyIndicator";
 
-const sportsScreen = ({ navigation }) => {
+const sportsScreen = ({ navigation,route }) => {
   const db = firebase.firestore();
   const [sports, setSports] = useState([])
 

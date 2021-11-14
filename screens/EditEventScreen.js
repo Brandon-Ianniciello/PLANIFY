@@ -1,23 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Textarea from 'react-native-textarea';
 import * as firebase from 'firebase';
 import { AuthContext } from '../navigation/AuthProvider';
 
-function editEvent(id,titre,description,catégorie,user) {
-    const db = firebase.firestore();
-    return db.collection('Ajouts').doc(id).set({
-        Description:description,
-        nom: titre,
-        Catégorie:catégorie,
-        Date: new Date(),
-        user: user.uid
 
-    })
-}
-
-const EditEventScreen = ({ route,navigation}) => {
+const EditEventScreen = ({ route, navigation }) => {
     /*
         1.Titre de l'évènement
         2.Date
@@ -27,20 +16,52 @@ const EditEventScreen = ({ route,navigation}) => {
         6.Description
         7.Localisation
     */
+
+    const [event, setEventInfo] = useState()
+    const { id } = route.params
     const [titre, setTitre] = useState("")
     const [description, setDescription] = useState("")
-    const [catégorie,setCatégorie] = useState("")
+    const [catégorie, setCatégorie] = useState("")
     const { user, logout } = useContext(AuthContext);
+    const db = firebase.firestore();
 
-    const { id } = route.params
+    function editEvent(id, titre, description, catégorie, user) {
+        const db = firebase.firestore();
+        even
+        return db.collection('Ajouts').doc(id).set({
+            Description: description,
+            nom: titre,
+            Catégorie: catégorie,
+            Date: new Date(),
+            user: user.uid
+        })
+    }
 
-    function erase(){
+    function setValues() {
+        console.log(event)
+    }
+
+    const getEventInfo = () => {
+        setEventInfo(null)
+        const ref = db.collection("Ajouts").doc(id);
+        ref.get().then((doc) => {
+            setEventInfo(doc.data())
+        })
+        setValues()
+    }
+
+    function erase() {
         setDescription("")
         setTitre("")
         setCatégorie("")
         navigation.navigate("Forum")
     }
-    
+
+    useEffect(() => {
+        getEventInfo()
+        setValues()
+    }, []);
+
     return (
         <View style={styles.container}>
             {/* Titre de l'event */}
@@ -77,7 +98,7 @@ const EditEventScreen = ({ route,navigation}) => {
                 placeholderTextColor={'#c7c7c7'}
                 underlineColorAndroid={'transparent'}
             />
-            <TouchableOpacity style={styles.bouton} onPress={() => {editEvent(id,titre,description,catégorie, user);erase()}}>
+            <TouchableOpacity style={styles.bouton} onPress={() => { editEvent(id, titre, description, catégorie, user); erase() }}>
                 <Text>Modifier</Text>
             </TouchableOpacity>
         </View>
@@ -128,5 +149,5 @@ const styles = StyleSheet.create({
         height: 180,
         padding: 5,
         backgroundColor: '#F5FCFF',
-      }
+    }
 })

@@ -37,5 +37,5 @@ npm i -S @react-google-maps/api
 --------2021-11-01---------
 npm install @react-native-community/geolocation --save
 npm install react-native link @react-native-community/geolocation
-
+npm install --save react-native-calendars
 

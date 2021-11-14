@@ -2,17 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, ScrollView, SafeAreaView, Image, TouchableOpacity, Button } from 'react-native';
 import FlastListEvent from "../components/FlatListEvent";
 import * as firebase from 'firebase';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const forum = ({ navigation }) => {
   const [ajouts, setAjouts] = useState([])
+  let length = 1
 
   const getAjouts = async () => {
+    setAjouts(null)
     const db = firebase.firestore();
     const response = db.collection('Ajouts');
     const data = await response.get();
     let R = []
     data.docs.forEach(item => {
       R.push(item.data())
+      length++
     })
     setAjouts(R)
   }
@@ -27,10 +31,10 @@ const forum = ({ navigation }) => {
     <ScrollView style={{ backgroundColor: "#dcdcdc" }}>
       <View style={{
         backgroundColor: "dcdcdc", height: "10%", borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20, width:'100%',marginTop:20
+        borderBottomRightRadius: 20, width: '100%', marginTop: 20
       }}>
-        <Button title="Ajouter un evenement" onPress={() => navigation.navigate("AddEventScreen")}></Button>
-        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10, width: "100%",paddingHorizontal: 20, }}>
+
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 50, width: "100%", paddingHorizontal: 20,paddingBottom:100 }}>
           {/* Texte d'accueil du forum */}
           <View style={{ width: "50%", backgroundColor: "#dcdcdc" }}>
             <Text style={{
@@ -49,19 +53,24 @@ const forum = ({ navigation }) => {
             />
           </View>
         </View>
-        
 
-        {/* Bouton pour ajouter un évènement */}
-        {/* <TouchableOpacity style={styles.bouton}
-          onPress={() => navigation.navigate("AddEventScreen")}>
-          <Text>Ajouter un évènement</Text>
-        </TouchableOpacity> */}
 
-        {/* Liste de tout les ajouts */}
-        <View style={{ flexDirection: 'column', flex: 1 }}>
-          <FlastListEvent data={ajouts} navigation={navigation} nomPage="Forum" />
-        </View>
       </View>
+      <View style={{paddingTop:20, flexDirection: 'row'}}>
+        <TouchableOpacity style={styles.bouton} onPress={() => navigation.navigate("AddEventScreen")}>
+          <FontAwesome name="plus" size={20} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.bouton} onPress={() => getAjouts()}>
+          <FontAwesome name="retweet" size={20} style={{ marginBottom: 5 }} />
+        </TouchableOpacity>
+      </View>
+      {/* Liste de tout les ajouts */}
+      <View style={{ flexDirection: 'column', flex: 1 }}>
+        <FlastListEvent data={ajouts} navigation={navigation} nomPage="Forum" />
+      </View>
+
+
+
     </ScrollView>
   )
 }
@@ -75,10 +84,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   bouton: {
-    backgroundColor: "white",
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 15,
-    color: 'white'
+    width: '50%' ,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  boutonAdd: {
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    color: 'white',
   }
 });

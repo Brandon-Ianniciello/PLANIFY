@@ -4,6 +4,7 @@ import { View, StyleSheet } from 'react-native';
 import { createStackNavigator } from "@react-navigation/stack";
 
 import AddEventScreen from '../screens/AddEventScreen'
+import EditEventScreen from '../screens/EditEventScreen'
 import forum from "../screens/Forum";
 
 function headerManager(title){
@@ -35,9 +36,13 @@ const AppStack = () => {
             <Forum.Screen
                 name="AddEventScreen"
                 component={AddEventScreen}
-                options={headerManager("Ajout d'un Planify")}
+                options={headerManager("AJOUTER AU FORUM")}
             />
-
+            <Forum.Screen
+                name="EditEventScreen"
+                component={EditEventScreen}
+                options={headerManager("MODIFIER")}
+            />
         </Forum.Navigator>
     )
 }

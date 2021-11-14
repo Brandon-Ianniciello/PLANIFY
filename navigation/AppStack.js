@@ -10,7 +10,6 @@ import FestivalsScreen from "../screens/FestivalsScreen";
 import IdéeDateScreen from "../screens/IdéeDateScreen";
 import RestaurantScreen from "../screens/RestaurantScreen";
 import PartyScreen from "../screens/PartyScreen";
-
 import Header from "../components/Header";
 
 function headerManager(title){
@@ -68,6 +67,7 @@ const AppStack = () => {
                 component={PartyScreen}
                 options={headerManager("Partys")}
             />
+          
 
         </App.Navigator>
     )

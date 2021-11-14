@@ -4,8 +4,9 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator, ScrollView, Toucha
 import GetData from '../utils/GetData';
 import * as firebase from 'firebase';
 import FlatListEvent from '../components/FlatListEvent';
+import PlanifyIndicator from "../components/PlanifyIndicator";
 
-const PartyScreen = ({ navigation }) => {
+const PartyScreen = ({ navigation,route }) => {
     //Création de la base de données
     const [partys, setPartys] = useState([])
 
@@ -31,7 +32,7 @@ const PartyScreen = ({ navigation }) => {
     if (partys != undefined || partys != null) {
         return (
             <View style={styles.container}>
-                <FlatListEvent navigation={navigation} nomPage={"PartyScreen"} data={partys}/>
+                <FlatListEvent navigation={navigation} nomPage={"PartyScreen"} data={partys} />
             </View>
         )
     }

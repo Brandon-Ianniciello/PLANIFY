@@ -20,18 +20,19 @@ const Profil = () => {
     const [userInfo, setUserInfo] = useState()
 
     //informations utilisateurs
-    const [City, setCity] = useState("")
-    const [Country, setCountry] = useState("")
-    const [Email, setEmail] = useState(user.email)
-    const [lastName, setLastName] = useState("")
-    const [firstName, setFirstName] = useState("")
-    const [imageProfil, setImageProfil] = useState("")
-    const [password, setPassword] = useState("")
-    const [phone, setPhone] = useState("")
-    const [sex, setSex] = useState("")
+    const [City, setCity] = useState(undefined)
+    const [Country, setCountry] = useState(undefined)
+    const [Email, setEmail] = useState(undefined)
+    const [lastName, setLastName] = useState(undefined)
+    const [firstName, setFirstName] = useState(undefined)
+    const [imageProfil, setImageProfil] = useState(undefined)
+    const [password, setPassword] = useState(undefined)
+    const [phone, setPhone] = useState(undefined)
+    const [sex, setSex] = useState(undefined)
     const db = firebase.firestore();
 
     const getUserInfo = () => {
+        setUserInfo(null)
         const ref = db.collection("users").doc(user.uid);
         ref.get().then((doc) => {
             setUserInfo(doc.data())
@@ -70,15 +71,16 @@ const Profil = () => {
             City: city,
             Sex: sex,
             Image: img,
-            Password: password
+            Password: password,
+            isAdmin:userInfo.isAdmin,
+            id:userInfo.id
         })
     }
 
     useEffect(() => {
         getUserInfo()
+        setValues()
     }, []);
-
-    console.log(user.uid)
 
     if (userIsNotNull() && userInfo != undefined) {
         let placeholderEmail = "Email"
@@ -102,7 +104,6 @@ const Profil = () => {
                             <TouchableOpacity style={styles.logoutButton} onPress={() => logout()}>
                                 <Text style={styles.panelButtonTitle}>Logout</Text>
                             </TouchableOpacity>
-
                         </View>
 
                     </View>
@@ -113,7 +114,7 @@ const Profil = () => {
                     </View>
                     {/* modification du prénom */}
                     <View style={styles.action}>
-                        <FontAwesome name="user-o" color={colors.text} size={20} style={{marginBottom:5}} />
+                        <FontAwesome name="user-o" color={colors.text} size={20} style={{ marginBottom: 5 }} />
                         <TextInput
                             placeholder={placeholderFirstName}
                             placeholderTextColor="#666666"
@@ -131,7 +132,7 @@ const Profil = () => {
 
                     {/* modification du nom de famille */}
                     <View style={styles.action}>
-                        <FontAwesome name="user-o" color={colors.text} size={20} style={{marginBottom:5}} />
+                        <FontAwesome name="user-o" color={colors.text} size={20} style={{ marginBottom: 5 }} />
                         <TextInput
                             placeholder={placeholderLastName}
                             placeholderTextColor="#666666"
@@ -149,7 +150,7 @@ const Profil = () => {
 
                     {/* modification du num de tel */}
                     <View style={styles.action}>
-                        <Feather name="phone" color={colors.text} size={20} style={{marginBottom:5}} />
+                        <Feather name="phone" color={colors.text} size={20} style={{ marginBottom: 5 }} />
                         <TextInput
                             placeholder={placeholderPhone}
                             placeholderTextColor="#666666"
@@ -168,7 +169,7 @@ const Profil = () => {
 
                     {/* modification du courriel */}
                     <View style={styles.action}>
-                        <FontAwesome name="envelope-o" color={colors.text} size={20} style={{marginBottom:5}} />
+                        <FontAwesome name="envelope-o" color={colors.text} size={20} style={{ marginBottom: 5 }} />
                         <TextInput
                             placeholder={placeholderEmail}
                             placeholderTextColor="#666666"
@@ -186,7 +187,7 @@ const Profil = () => {
                     </View>
                     {/* modification du pays */}
                     <View style={styles.action}>
-                        <FontAwesome name="globe" color={colors.text} size={20} style={{marginBottom:5}} />
+                        <FontAwesome name="globe" color={colors.text} size={20} style={{ marginBottom: 5 }} />
                         <TextInput
                             placeholder={placeholderCountry}
                             placeholderTextColor="#666666"
@@ -203,7 +204,7 @@ const Profil = () => {
                     </View>
                     {/* modification de la ville */}
                     <View style={styles.action}>
-                        <Icon name="map-marker-outline" color={colors.text} size={20} style={{marginBottom:5}} />
+                        <Icon name="map-marker-outline" color={colors.text} size={20} style={{ marginBottom: 5 }} />
                         <TextInput
                             placeholder={placeholderCity}
                             placeholderTextColor="#666666"
@@ -316,5 +317,5 @@ const styles = StyleSheet.create({
         width: 70,
         borderRadius: 10,
         marginLeft: 170,
-    },
+    }
 })

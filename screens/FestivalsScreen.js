@@ -6,8 +6,9 @@ import GetData from '../utils/GetData';
 import * as firebase from 'firebase';
 
 import FlatListEvent from '../components/FlatListEvent';
+import PlanifyIndicator from "../components/PlanifyIndicator";
 
-const FestivalsScreen = ({ navigation }) => {
+const FestivalsScreen = ({ navigation,route }) => {
   //Création de la base de données
   const [festivals, setFestivals] = useState([])
 
@@ -35,11 +36,7 @@ const FestivalsScreen = ({ navigation }) => {
     )
   }
   else if (festivals == undefined || festivals == null) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator animating={true} color="black" size="large" />
-      </View>
-    )
+    return(<PlanifyIndicator/>)
   }
 }
 
