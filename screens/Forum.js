@@ -56,7 +56,7 @@ const forum = ({ navigation }) => {
 
 
       </View>
-      <View style={{paddingTop:10, flexDirection: 'row'}}>
+      <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={styles.bouton} onPress={() => navigation.navigate("AddEventScreen")}>
           <FontAwesome name="plus" color='#33cc33' size={25} />
         </TouchableOpacity>

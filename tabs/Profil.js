@@ -20,15 +20,15 @@ const Profil = () => {
     const [userInfo, setUserInfo] = useState()
 
     //informations utilisateurs
-    const [City, setCity] = useState(undefined)
-    const [Country, setCountry] = useState(undefined)
-    const [Email, setEmail] = useState(undefined)
-    const [lastName, setLastName] = useState(undefined)
-    const [firstName, setFirstName] = useState(undefined)
-    const [imageProfil, setImageProfil] = useState(undefined)
-    const [password, setPassword] = useState(undefined)
-    const [phone, setPhone] = useState(undefined)
-    const [sex, setSex] = useState(undefined)
+    const [City, setCity] = useState("")
+    const [Country, setCountry] = useState("")
+    const [Email, setEmail] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [firstName, setFirstName] = useState("")
+    const [imageProfil, setImageProfil] = useState("")
+    const [password, setPassword] = useState("")
+    const [phone, setPhone] = useState("")
+    const [sex, setSex] = useState("")
     const db = firebase.firestore();
 
     const getUserInfo = () => {
@@ -92,7 +92,7 @@ const Profil = () => {
 
         return (
             <SafeAreaView style={styles.container}>
-                <Header title='Profile' />
+                <Header title='Profil' />
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
                     <View style={styles.profileInfos}>
                         {/* image de profil */}
@@ -101,15 +101,16 @@ const Profil = () => {
                         <View style={styles.name}>
                             <Text style={styles.nameChar}>{firstName} {lastName}</Text>
                             <Text style={styles.email}>{user.email}</Text>
-                            <TouchableOpacity style={styles.logoutButton} onPress={() => logout()}>
-                                <Text style={styles.panelButtonTitle}>Logout</Text>
-                            </TouchableOpacity>
+
                         </View>
 
                     </View>
-                    <View>
+                    <View style={{flexDirection:'row'}}>
                         <TouchableOpacity style={styles.refreshBouton} onPress={() => setValues()}>
-                            <Text style={styles.panelButtonTitle}>Refresh</Text>
+                            <FontAwesome name="retweet" color='#0099ff' size={20} style={{ marginBottom: 5 }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.logoutButton} onPress={() => logout()}>
+                                <FontAwesome name="sign-out" color='#ff3300' size={20}/>
                         </TouchableOpacity>
                     </View>
                     {/* modification du prénom */}
@@ -301,9 +302,6 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     refreshBouton: {
-        backgroundColor: 'green',
-        width: 70,
-        borderRadius: 10,
         marginLeft: 170,
     },
     panelButtonTitle: {
@@ -313,9 +311,6 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     logoutButton: {
-        backgroundColor: "#e88832",
-        width: 70,
-        borderRadius: 10,
-        marginLeft: 170,
+        marginLeft: 70,
     }
 })
