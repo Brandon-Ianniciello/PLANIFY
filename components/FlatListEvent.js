@@ -124,7 +124,8 @@ const styles = StyleSheet.create({
     },
     titre: {
         fontSize:25,
-        paddingLeft:5
+        paddingLeft:5,
+        fontWeight: 'bold'
     },
     item: {
         margin:0,

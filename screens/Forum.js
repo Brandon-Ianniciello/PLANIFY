@@ -34,7 +34,7 @@ const forum = ({ navigation }) => {
         borderBottomRightRadius: 20, width: '100%', marginTop: 20
       }}>
 
-        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 50, width: "100%", paddingHorizontal: 20,paddingBottom:100 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 20, width: "100%", paddingHorizontal: 20,paddingBottom:100 }}>
           {/* Texte d'accueil du forum */}
           <View style={{ width: "50%", backgroundColor: "#dcdcdc" }}>
             <Text style={{
@@ -56,12 +56,12 @@ const forum = ({ navigation }) => {
 
 
       </View>
-      <View style={{paddingTop:20, flexDirection: 'row'}}>
+      <View style={{paddingTop:10, flexDirection: 'row'}}>
         <TouchableOpacity style={styles.bouton} onPress={() => navigation.navigate("AddEventScreen")}>
-          <FontAwesome name="plus" size={20} />
+          <FontAwesome name="plus" color='#33cc33' size={25} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.bouton} onPress={() => getAjouts()}>
-          <FontAwesome name="retweet" size={20} style={{ marginBottom: 5 }} />
+          <FontAwesome name="retweet" color="#0099ff" size={25} style={{ marginBottom: 5 }} />
         </TouchableOpacity>
       </View>
       {/* Liste de tout les ajouts */}
