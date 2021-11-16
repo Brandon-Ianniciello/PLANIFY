@@ -8,7 +8,7 @@ import carte from '../tabs/Carte';
 import profil from '../tabs/Profil';
 import AppStack from './AppStack'
 import ForumStack from "./ForumStack"
-
+import ProfilStack from "./ProfilStack"
 
 /*icons*/
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -46,7 +46,7 @@ const TabStack = () => {
             <Tab.Screen name="Forum" component={ForumStack} options={{ headerShown: false }} />
             <Tab.Screen name="Accueil" component={AppStack} options={{ headerShown: false }} />
             <Tab.Screen name="Carte" component={carte} options={{ headerShown: false }} />
-            <Tab.Screen name="Profil" component={profil} options={{ headerShown: false }} />
+            <Tab.Screen name="Profil" component={ProfilStack} options={{ headerShown: false }} />
         </Tab.Navigator>
     )
 }

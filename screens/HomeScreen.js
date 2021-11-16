@@ -11,9 +11,6 @@ const HomeScreen = ({ navigation }) => {
         img = img.toString()
         return (
             <View>
-                <LinearGradient
-                    colors={["rgba(0,210,109,0.09)", "transparent"]}
-                    style={{ position: "absolute", left: 0, right: 0, height: 100, marginTop: 0, top: 0, width:'50%'}} />
                 <View style={{ flexDirection: "row", paddingHorizontal: 20, width: "100%", alignItems: "center" }}>
                     <View style={{ width: "50%" }}>
                         <Text style={{ fontWeight: "bold", fontSize: 17, color: "#585a61" }}>{nom}</Text>
@@ -28,8 +25,10 @@ const HomeScreen = ({ navigation }) => {
 
                 </View>
 
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 350 }}>
-                    
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 400 }}>
+                    <LinearGradient
+                        colors={["rgba(0,210,109,0.09)", "transparent"]}
+                        style={{ position: "absolute", left: 0, right: 0, height: 100, marginTop: 220, top: 0 }} />
                     <TouchableOpacity
                         onPress={() => {
                             navigation.navigate(screenName);
@@ -60,8 +59,8 @@ const HomeScreen = ({ navigation }) => {
 
 
     return (
-        <ScrollView style={{ backgroundColor: "#dadada" }}>
-            <View style={{ backgroundColor: "#5cdb95", height: "6%", borderBottomLeftRadius: 20, borderBottomRightRadius: 20, paddingHorizontal: 20 }}>
+        <ScrollView style={{ backgroundColor: "#fff" }}>
+            <View style={{ backgroundColor: "#5cdb95", height: "7%", borderBottomLeftRadius: 20, borderBottomRightRadius: 20, paddingHorizontal: 20 }}>
                 <Image
                     source={require('../assets/1.png')}
                     style={{

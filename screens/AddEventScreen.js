@@ -39,18 +39,11 @@ const AddEventScreen = ({ navigation, route }) => {
             navigation.navigate("AddEventScreen")
             return
         }
-        else if (description == "" || description == undefined || description == null) {
-            alert("DESCRIPTION VIDE... 🤔")
-            navigation.navigate("AddEventScreen")
-            return
-        }
         else if (catégorie == "" || catégorie == undefined || catégorie == null) {
             alert("CATÉGORIE VIDE... 🤔")
             navigation.navigate("AddEventScreen")
             return
         }
-
-        console.log(titre, " add in db")
 
         try {
             return db.collection('Ajouts').add({
@@ -64,7 +57,9 @@ const AddEventScreen = ({ navigation, route }) => {
         } catch (e) {
             console.log("ERREUR DANS L'AJOUT D'UN EVENT:", e)
         }
-
+        finally{
+            console.log(titre, " add in db")
+        }
     }
 
     return (
@@ -151,7 +146,7 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     textareaContainer: {
-        height: 100,
+        height: 180,
         padding: 5,
         backgroundColor: '#F5FCFF',
     }

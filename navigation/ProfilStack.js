@@ -3,9 +3,11 @@ import { View, StyleSheet } from 'react-native';
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import AddEventScreen from '../screens/AddEventScreen'
-import EditEventScreen from '../screens/EditEventScreen'
+import SelectPhotos from '../screens/SelectPhotos'
 import forum from "../screens/Forum";
+import Profil from "../tabs/Profil";
+
+const ProfilStack = createStackNavigator();
 
 function headerManager(title){
     return(
@@ -23,27 +25,20 @@ function headerManager(title){
     )
 }
 
-const Forum = createStackNavigator();
-
 const AppStack = () => {
     return (
-        <Forum.Navigator styles={styles.container}>
-            <Forum.Screen
-                name="Forum"
-                component={forum}
+        <ProfilStack.Navigator styles={styles.container}>
+            <ProfilStack.Screen
+                name="Profil"
+                component={Profil}
                 options={{ headerShown: false }}
             />
-            <Forum.Screen
-                name="AddEventScreen"
-                component={AddEventScreen}
-                options={headerManager("AJOUTER AU FORUM")}
+            <ProfilStack.Screen
+                name="SelectPhotos"
+                component={SelectPhotos}
+                options={headerManager("PHOTO")}
             />
-            <Forum.Screen
-                name="EditEventScreen"
-                component={EditEventScreen}
-                options={headerManager("MODIFIER")}
-            />
-        </Forum.Navigator>
+        </ProfilStack.Navigator>
     )
 }
 

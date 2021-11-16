@@ -8,6 +8,56 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 
 const API_KEY = "AIzaSyCEY83Y-5Rehs-Ha-2Vklocapm72B1B43M"
 
+function fetchNearestPlacesFromGoogle(latitude, longitude){
+
+    //const latitude = 25.0756; // you can update it with user's latitude & Longitude
+    // const longitude = 55.1454;
+    //let radMetter = 2 * 1000; // Search withing 2 KM radius
+
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + latitude + ',' + longitude + '&radius=' + 30000 + '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U'
+
+    fetch(url)
+        .then(res => {
+            return res.json()
+        })
+        .then(res => {
+
+            var places = [] // This Array WIll contain locations received from google
+            for (let googlePlace of res.results) {
+                var place = {}
+                var lat = googlePlace.geometry.location.lat;
+                var lng = googlePlace.geometry.location.lng;
+                var coordinate = {
+                    latitude: lat,
+                    longitude: lng,
+                }
+
+                var gallery = []
+
+                if (googlePlace.photos) {
+                    for (let photo of googlePlace.photos) {
+                        var photoUrl = Urls.GooglePicBaseUrl + photo.photo_reference;
+                        gallery.push(photoUrl);
+                    }
+                }
+
+                place['placeTypes'] = googlePlace.types
+                place['coordinate'] = coordinate
+                place['placeId'] = googlePlace.place_id
+                place['placeName'] = googlePlace.name
+                place['gallery'] = gallery
+
+                places.push(place);
+            }
+
+            console.log(places)
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+}
+
 const carte = ({ route, navigation }) => {
 
     let initialRegion = {

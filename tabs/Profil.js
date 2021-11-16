@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View, Text, Image, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import Header from "../components/Header";
 import PlanifyIndicator from "../components/PlanifyIndicator"
 import { AuthContext } from '../navigation/AuthProvider';
@@ -11,24 +11,22 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import * as firebase from 'firebase';
 
-const url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-
-const Profil = () => {
+const Profil = ({navigation}) => {
     const { user, logout } = useContext(AuthContext);
     const { colors } = useTheme();
 
     const [userInfo, setUserInfo] = useState()
 
     //informations utilisateurs
-    const [City, setCity] = useState("")
-    const [Country, setCountry] = useState("")
-    const [Email, setEmail] = useState("")
-    const [lastName, setLastName] = useState("")
-    const [firstName, setFirstName] = useState("")
-    const [imageProfil, setImageProfil] = useState("")
-    const [password, setPassword] = useState("")
-    const [phone, setPhone] = useState("")
-    const [sex, setSex] = useState("")
+    const [City, setCity] = useState(undefined)
+    const [Country, setCountry] = useState(undefined)
+    const [Email, setEmail] = useState(undefined)
+    const [lastName, setLastName] = useState(undefined)
+    const [firstName, setFirstName] = useState(undefined)
+    const [imageProfil, setImageProfil] = useState("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png")
+    const [password, setPassword] = useState(undefined)
+    const [phone, setPhone] = useState(undefined)
+    const [sex, setSex] = useState(undefined)
     const db = firebase.firestore();
 
     const getUserInfo = () => {
@@ -48,20 +46,28 @@ const Profil = () => {
 
     function setValues() {
         if (userIsNotNull()) {
+            if(userInfo.Image == null || userInfo.Image == "")
+                setImageProfil("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png")
+            else
+                setImageProfil(userInfo.Image)
             setCity(userInfo.City)
             setCountry(userInfo.Country)
             setEmail(userInfo.Email)
             setLastName(userInfo.LastName)
             setFirstName(userInfo.FirstName)
-            setImageProfil(userInfo.Image)
             setPassword(userInfo.Password)
             setPhone(userInfo.Phone)
             setSex(userInfo.Sex)
         }
+
+        
     }
 
     function editValues(firstName, lastName, phone, email, country, city, sex, img, password) {
         console.log("Submit the edit for user#:", userInfo.id)
+        // RECRÉATION DE COMPTE SI BESOIN DE RAJOUTER UN CHAMP
+        if(img=="")
+            img = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
         return db.collection('users').doc(userInfo.id).set({
             FirstName: firstName,
             LastName: lastName,
@@ -72,8 +78,8 @@ const Profil = () => {
             Sex: sex,
             Image: img,
             Password: password,
-            isAdmin:userInfo.isAdmin,
-            id:userInfo.id
+            isAdmin: userInfo.isAdmin,
+            id: userInfo.id
         })
     }
 
@@ -92,16 +98,17 @@ const Profil = () => {
 
         return (
             <SafeAreaView style={styles.container}>
-                <Header title='Profil' />
+                <Header title='Profile' />
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
                     <View style={styles.profileInfos}>
                         {/* image de profil */}
-                        <Image style={styles.image} source={{ uri: url }} />
+                        <TouchableOpacity onPress={() => {navigation.navigate("SelectPhotos",{photoUrl:imageProfil})}}>
+                            <Image style={styles.image} source={{ uri: imageProfil }} />
+                        </TouchableOpacity>
                         {/* nom de l'utilisateur */}
                         <View style={styles.name}>
                             <Text style={styles.nameChar}>{firstName} {lastName}</Text>
                             <Text style={styles.email}>{user.email}</Text>
-
                         </View>
 
                     </View>

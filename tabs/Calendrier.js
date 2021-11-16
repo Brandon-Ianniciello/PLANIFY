@@ -1,126 +1,284 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, FlatList } from 'react-native';
-
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, Button, SafeAreaView, FlatList, TouchableOpacity, Platform } from 'react-native';
+import { AuthContext } from '../navigation/AuthProvider';
 import Header from '../components/Header';
-
+import Event from '../components/Event';
+import PlanifyIndicator from '../components/PlanifyIndicator';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
-import { LogBox } from 'react-native';
-
-LogBox.ignoreLogs(['Setting a timer']);
-
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as firebase from 'firebase';
 
 const calendrier = ({ route, navigation }) => {
 
-  const agendaPlanify = () => {
+  /*-------------------constantes et variables-----------------*/
+  const [ajout, setAjout] = useState(null)
+  const [events, setEvents] = useState({})
+  const [markedDates, setMarkedDate] = useState([])
+  const [calendrier, setCalendrier] = useState([{}])
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+
+  const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
+    "Octobre", "Novembre", "Décembre"];
+
+  const days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+
+  const today = new Date().toISOString().split('T')[0]
+
+  const db = firebase.firestore();
+
+  /*-------------------FONCTIONS-------------------*/
+  const { user } = useContext(AuthContext);
+  const [userInfo, setUserInfo] = useState()
+
+  const getUserInfo = async () => {
+    const db = firebase.firestore();
+    const ref = db.collection("users").doc(user.uid);
+
+    ref.get().then((doc) => {
+      setUserInfo(doc.data())
+    })
+  }
+
+  function addEventInCalendar(event, date) {
+    try {
+      return db.collection('Calendrier').add({
+        event: event,
+        date: date,
+        user: userInfo
+      })
+    } catch (e) {
+      console.log("ERREUR DANS L'AJOUT D'UN EVENT DANS LE CALENDRIER:", e)
+    }
+    finally {
+      console.log(event.nom, " ajouté dans le calendrier")
+
+    }
+  }
+
+  function editEventFromCalendar(eventId) {
+    console.log("Edit event from calendar:", eventId)
+  }
+
+  function deleteFromCalendar(eventId) {
+    console.log("Delete evetn from calendar", eventId)
+  }
+
+  /*--POUR ALLÉ CHERCHER LES ÉVÈNEMENTS DÉJÀ AJOUTÉ AU CALENDRIER */
+  const getEventsFromCalendar = async () => {
+    const response = db.collection('Calendrier');
+    const data = await response.get();
+    let tabDates = []
+    let tabEvents = []
+    let Calendrier = ([{}])
+
+    data.docs.forEach(item => {
+      // à faire avec le id wesh
+      if (item.data().user != undefined) {
+        if ((item.data().user.Email).toLowerCase() == user.email.toLowerCase()) {
+          tabDates.push((item.data().year + '-' + item.data().month + '-' + item.data().day).toString())
+          tabEvents.push(item.data().event)
+          Calendrier.push({ "date": ((item.data().year + '-' + item.data().month + '-' + item.data().day).toString()), "event": item.data().event })
+        }
+        else {
+          setEvents("Aucun évènement")
+        }
+      }
+
+    })
+
+    setMarkedDate(tabDates)
+    setEvents(tabEvents)
+    setCalendrier(Calendrier)
+  }
+
+  const AgendaPlanify = () => {
+    if (calendrier != null) {
+      return (
+        <SafeAreaView style={{ flex: 1 }}>
+          <Calendar
+            selected={today}
+            minDate={new Date()}
+            markedDates={markedDates}
+          />
+          <View style={styles.itemContainer}>
+            <Text style={styles.titre}>ÉVÈNEMENTS DANS LE CALENDRIER</Text>
+            <FlatList
+              data={events}
+              refreshing={true}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => {
+                return (
+                  <View>
+                    <View style={{ flexDirection: 'column' }}>
+                      <View style={{ flexDirection: 'row' }}>
+                        <Event item={item} navigation={navigation} nomPage={"Calendrier"} userInfo={userInfo} uid={item.User} />
+                      </View>
+                      <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity style={styles.bouton} onPress={() => deleteFromCalendar(item)}>
+                          <Text>Supprimé</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.bouton} onPress={() => editEventFromCalendar(item)}>
+                          <Text>Modifié</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Text>Planifié le </Text>
+                      {/* {
+                        item.map(function(key,value){
+                          return(
+                            <View>
+                              <Text>{value}</Text>
+                            </View>
+                          )
+                        })
+                      } */}
+                    </View>
+                  </View>
+                )
+              }}
+            />
+          </View>
+        </SafeAreaView>
+      )
+
+    }
+    else if (calendrier.size == 0 || events.length == 0) {
+      return (
+        <SafeAreaView style={{ flex: 1 }}>
+          <Calendar />
+          <Text>Aucuns évènements dans le calendrier</Text>
+        </SafeAreaView>
+
+      )
+    }
+  }
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const showTimepicker = () => {
+    showMode('time');
+  };
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+  };
+
+
+  useEffect(() => {
+    setUserInfo(null)
+    getUserInfo()
+    setEvents(null)
+    getEventsFromCalendar()
+  }, []);
+
+  /*----------------AFFICHAGE------------------*/
+  if (events == undefined || events == null)
+    return (<PlanifyIndicator />)
+  /* AJOUT D'UN EVENT DANS LE CALENDRIER */
+  if (route.params != undefined) {
+    let item = route.params.event
     return (
-      <SafeAreaView>
-        <Agenda
-          //loadItemsForMonth={this.loadItems.bind(this)}
-          markedDates={{
-            '2022-07-05': { selected: true, marked: true }
-          }}        //renderItem={this.renderItem.bind(this)}
-        //renderEmptyDate={this.renderEmptyDate.bind(this)}
-        //rowHasChanged={this.rowHasChanged.bind(this)}
-        />
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.item}>
+          <Text style={styles.titre}>Ajout de {item.nom} au calendrier</Text>
+          <Text>Choisissez le moment de l'évènement</Text>
+
+          <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+
+            <TouchableOpacity onPress={showDatepicker} style={styles.bouton}>
+              <Text>Date : {days[date.getDay()]} {date.getDate()} {months[date.getUTCMonth()]} {date.getFullYear()}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={showTimepicker} style={styles.bouton}>
+              <Text>Heure : {date.getHours()}:{date.getMinutes()}</Text>
+            </TouchableOpacity>
+
+            <View>
+              {show && (
+                <DateTimePicker
+                  minimumDate={new Date()}
+                  testID="dateTimePicker"
+                  value={date}
+                  mode={mode}
+                  is24Hour={true}
+                  display="default"
+                  onChange={onChange}
+                />
+              )}
+            </View>
+
+            <View style={{ flexDirection: 'row' }}>
+              <TouchableOpacity
+                style={styles.bouton}
+                onPress={() => { addEventInCalendar(item, date); item = null; navigation.navigate("Calendrier") }}>
+                <Text>
+                  Ajouter
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.bouton} onPress={() => { item = null; navigation.navigate("Calendrier") }}>
+                <Text>Annuler</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       </SafeAreaView>
     )
   }
-
-  if (route.params != undefined)
-  {
-    const event = route.params.event
-    const page = route.params.page
-    console.log(event)
-
-    return (
-      <View>
-        {/* <Header title="CALENDRIER" /> */}
-        <View style={styles.container}>
-          <Text>{event.nom.toString()}</Text>
-        </View>
-        {/* <agendaPlanify/> */}
-        <Agenda/>
-        {/* <Agenda
-          // The list of items that have to be displayed in agenda. If you want to render item as empty date
-          // the value of date key has to be an empty array []. If there exists no value for date key it is
-          // considered that the date in question is not yet loaded
-          items={{
-            '2012-05-22': [{ name: 'item 1 - any js object' }],
-            '2012-05-23': [{ name: 'item 2 - any js object', height: 80 }],
-            '2012-05-24': [],
-            '2012-05-25': [{ name: 'item 3 - any js object' }, { name: 'any js object' }]
-          }}
-          // Callback that gets called when items for a certain month should be loaded (month became visible)
-          loadItemsForMonth={(month) => { console.log('trigger items loading') }}
-          // Callback that fires when the calendar is opened or closed
-          onCalendarToggled={(calendarOpened) => { console.log(calendarOpened) }}
-          // Callback that gets called on day press
-          onDayPress={(day) => { console.log('day pressed') }}
-          // Callback that gets called when day changes while scrolling agenda list
-          onDayChange={(day) => { console.log('day changed') }}
-          // Initially selected day
-          selected={Date.now}
-          // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-          minDate={Date.now}
-          // Max amount of months allowed to scroll to the past. Default = 50
-          pastScrollRange={50}
-          // Max amount of months allowed to scroll to the future. Default = 50
-          futureScrollRange={50}
-          // Specify how each item should be rendered in agenda
-          renderItem={(item, firstItemInDay) => { return (<View />); }}
-          // Specify how each date should be rendered. day can be undefined if the item is not first in that day
-          renderDay={(day, item) => { return (<View />); }}
-          // Specify how empty date content with no items should be rendered
-          renderEmptyDate={() => { return (<View />); }}
-          // Specify how agenda knob should look like
-          renderKnob={() => { return (<View />); }}
-          // Specify what should be rendered instead of ActivityIndicator
-          renderEmptyData={() => { return (<View />); }}
-          // Specify your item comparison function for increased performance
-          rowHasChanged={(r1, r2) => { return r1.text !== r2.text }}
-          // Hide knob button. Default = false
-          hideKnob={true}
-          // When `true` and `hideKnob` prop is `false`, the knob will always be visible and the user will be able to drag the knob up and close the calendar. Default = false
-          showClosingKnob={false}
-          // By default, agenda dates are marked if they have at least one item, but you can override this if needed
-          markedDates={{
-            '2012-05-16': { selected: true, marked: true },
-            '2012-05-17': { marked: true },
-            '2012-05-18': { disabled: true }
-          }}
-          // If disabledByDefault={true} dates flagged as not disabled will be enabled. Default = false
-          disabledByDefault={true}
-          // If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the refreshing prop correctly
-          onRefresh={() => console.log('refreshing...')}
-          // Set this true while waiting for new data from a refresh
-          refreshing={false}
-          // Add a custom RefreshControl component, used to provide pull-to-refresh functionality for the ScrollView
-          refreshControl={null}
-          // Agenda theme
-          theme={{
-            agendaDayTextColor: 'yellow',
-            agendaDayNumColor: 'green',
-            agendaTodayColor: 'red',
-            agendaKnobColor: 'blue'
-          }}
-          // Agenda container style
-          style={styles.agenda}
-        /> */}
-      </View>
-    )
-  }
-  else if(route.params == undefined){
-    return(
-      <Agenda/>
-    )
-  }
+  /* AFFICHAGE DE TOUT LES ÉVÈNEMENTS */
+  return (<AgendaPlanify />)
 }
 
 export default calendrier;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  liste: {
+    flexDirection: "column",
+    backgroundColor: '#dcdcdc'
+  },
+  titre: {
+    fontSize: 30
+  },
+  item: {
+    backgroundColor: 'white',
+    borderColor: 'black',
+    borderWidth: 5,
+    margin: '5%',
+    flexDirection: 'column'
+  },
+  itemContainer: {
+    backgroundColor: 'white',
+    margin: 5,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+  bouton: {
+    backgroundColor: "#00a46c",
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    borderRadius: 15,
+    color: 'white',
+    alignContent: 'center',
+    textAlign: 'center',
+    margin: 30
   }
 });

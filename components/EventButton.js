@@ -4,6 +4,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const EventButton = ({ navigation, item, nomPage }) => {
     let boutonCarte = <View></View>
+    let boutonCalendrier = <View></View>
+
     if (item.localisation != undefined) {
         boutonCarte = (
             <View style={styles.bouton}>
@@ -20,9 +22,8 @@ const EventButton = ({ navigation, item, nomPage }) => {
         )
     }
 
-    return (
-        <View style={{ flexDirection: 'row' }}>
-            {boutonCarte}
+    if (nomPage != "Calendrier") {
+        boutonCalendrier = (
             <View style={styles.bouton}>
                 <TouchableOpacity
                     onPress={() => navigation.navigate("Calendrier", {
@@ -32,6 +33,13 @@ const EventButton = ({ navigation, item, nomPage }) => {
                     <Ionicons name={'calendar-outline'} size={20} color={'gray'} />
                 </TouchableOpacity>
             </View>
+        )
+    }
+
+    return (
+        <View style={{ flexDirection: 'row' }}>
+            {boutonCarte}
+            {boutonCalendrier}
         </View>
     )
 }
