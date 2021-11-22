@@ -1,62 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Button, TouchableOpacity } from 'react-native';
-import MapView, { Callout, Circle, Polygon, Polyline } from 'react-native-maps';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Dimensions, Button, TouchableOpacity, SliderComponent } from 'react-native';
+import MapView, { Callout, Circle, Polygon, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 import Header from '../components/Header';
-
-import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api"
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import useGeoLocation from '../utils/getGeoLocation';
+import Slider from '@react-native-community/slider';
 
-const API_KEY = "AIzaSyCEY83Y-5Rehs-Ha-2Vklocapm72B1B43M"
-
-function fetchNearestPlacesFromGoogle(latitude, longitude){
-
-    //const latitude = 25.0756; // you can update it with user's latitude & Longitude
-    // const longitude = 55.1454;
-    //let radMetter = 2 * 1000; // Search withing 2 KM radius
-
-    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + latitude + ',' + longitude + '&radius=' + 30000 + '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U'
-
-    fetch(url)
-        .then(res => {
-            return res.json()
-        })
-        .then(res => {
-
-            var places = [] // This Array WIll contain locations received from google
-            for (let googlePlace of res.results) {
-                var place = {}
-                var lat = googlePlace.geometry.location.lat;
-                var lng = googlePlace.geometry.location.lng;
-                var coordinate = {
-                    latitude: lat,
-                    longitude: lng,
-                }
-
-                var gallery = []
-
-                if (googlePlace.photos) {
-                    for (let photo of googlePlace.photos) {
-                        var photoUrl = Urls.GooglePicBaseUrl + photo.photo_reference;
-                        gallery.push(photoUrl);
-                    }
-                }
-
-                place['placeTypes'] = googlePlace.types
-                place['coordinate'] = coordinate
-                place['placeId'] = googlePlace.place_id
-                place['placeName'] = googlePlace.name
-                place['gallery'] = gallery
-
-                places.push(place);
-            }
-
-            console.log(places)
-        })
-        .catch(error => {
-            console.log(error);
-        });
-
-}
+const API_KEY = "AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U"
 
 const carte = ({ route, navigation }) => {
 
@@ -72,6 +22,9 @@ const carte = ({ route, navigation }) => {
     let longitudeEvent = initialRegion.longitude
     let nom = ""
     let page = "HomeScreen"
+    const location = useGeoLocation();
+
+    let nearestRestaurant = FetchNearestRestaurantFromGoogle(location,distance);
 
     if (route.params != undefined) {
         évènement = route.params
@@ -84,27 +37,25 @@ const carte = ({ route, navigation }) => {
         if (route.params.page != undefined)
             page = route.params.page
     }
+    
+    const [pin, setPin] = useState({ latitude: 45.642249982790126, longitude: -73.8423519855052 })
+    const [region, setRegion] = useState({ latitude: 45.642249982790126, longitude: -73.8423519855052 })
+    const [eventSelectionné, setEventSélectionné] = useState(null)
+    const [distance, setDistance] = useState(30)//30km
 
-    const [pin, setPin] = useState({ latitude: initialRegion.latitude, longitude: initialRegion.longitude })
-    const [region, setRegion] = useState({ latitude: initialRegion.latitude, longitude: initialRegion.longitude })
+    // const [distancePoint,setDistancePoint] = useState({ distance: )
 
     //si le user a cliqué sur "Trouver sur la carte"
     if (évènement != undefined || évènement != null) {
-
         initialRegion.latitude = latitudeEvent
         initialRegion.longitude = longitudeEvent
         return (
             <View style={{ marginTop: 50, flex: 1 }}>
                 <View style={{ flexDirection: 'column' }}>
-                    <Header title="carte" />
-                    <TouchableOpacity onPress={() => {
-                        évènement = null
-                        navigation.navigate(page);
-                    }}
-                        style={styles.boutonRetour}
-                    >
+                    <TouchableOpacity onPress={() => { évènement = null; navigation.navigate('Carte'); }}
+                        style={styles.boutonRetour}>
                         <Text style={{ textAlign: 'center' }}>
-                            Retourner à {nom}
+                            Retourner à l'endroit de départ
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -113,7 +64,9 @@ const carte = ({ route, navigation }) => {
                     initialRegion={initialRegion}
                     showsUserLocation={true}
                     provider="google">
-                    <MapView.Marker coordinate={{ latitude: latitudeEvent, longitude: longitudeEvent }} />
+                    <MapView.Marker
+                        coordinate={{ latitude: latitudeEvent, longitude: longitudeEvent }}
+                    />
                 </MapView>
             </View>
         )
@@ -123,21 +76,30 @@ const carte = ({ route, navigation }) => {
         return (
             <View style={{ marginTop: 50, flex: 1 }}>
                 <GooglePlacesAutocomplete
-                    placeholder='Search'
+                    placeholder='Recherche'
                     fetchDetails={true}
-                    GooglePlacesSearchQuery={{
-                        rankby: "distance"
-                    }}
                     onPress={(data, details = null) => {
                         // 'details' is provided when fetchDetails = true
-                        console.log(data, details);
+                        //console.log(data, details);
+                        console.log(data)
+                        setEventSélectionné(data)
+                        setRegion({
+                            latitude: details.geometry.location.lat,
+                            longitude: details.geometry.location.lng,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421
+                        })
+                        initialRegion.latitude = region.latitude
+                        initialRegion.longitude = region.longitude
+                        //console.log(nearestRestaurant);
+                        //console.log(location.loaded ? JSON.stringify(location): "Location data not available yet")
+                        //console.log(location);
                     }}
                     query={{
-                        key: API_KEY,
-                        language: 'en',
-                        components: "country:ca",
-                        types: "establishment",
-                        radius: 30000,
+                        key: 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U',
+                        language: 'fr',
+                        types: 'establishment',
+                        radius: distance*1000,
                         location: `${region.latitude}, ${region.longitude}`
                     }}
                     styles={{
@@ -145,24 +107,94 @@ const carte = ({ route, navigation }) => {
                         listView: { backgroundColor: "white" }
                     }}
                 />
+                <View style={{
+                    margin:40,alignItems:'center',flexDirection:'row'
+                }}>
+                    <Text>{distance} km</Text>
+                    <Slider
+                        style={{ width: 200, height: 40 }}
+                        minimumValue={5}
+                        maximumValue={50}
+                        minimumTrackTintColor="#FFFFFF"
+                        maximumTrackTintColor="#000000"
+                        defaultValue={30}
+                        aria-label="Default" 
+                        valueLabelDisplay="auto"
+                        step={5}
+                        onValueChange={(v)=>setDistance(v)}
+                        value={distance}
+                    />
+                    <Text>Rayon de recherche</Text>
+                </View>
+
                 <MapView
                     style={styles.mapStyle}
-                    initialRegion={initialRegion}
+                    region={region}
                     showsUserLocation={true}
-                    provider="google">
-                    <MapView.Marker coordinate={{ latitude: 37.78825, longitude: -122.4324 }} draggable
-                        onDragEnd={(e) => {
-                            setPin({
-                                latitude: e.nativeEvent.coordinate.latitude,
-                                longitude: e.nativeEvent.coordinate.longitude
-                            })
-                        }}>
-                    </MapView.Marker>
+                    provider='google'>
+                    <MapView.Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }}
+                        onPress={() => {
+                            navigation.navigate("RestaurantScreen", { event: nearestRestaurant, eventClique: eventSelectionné })
+                        }}
+                    />
+                    <Polyline coordinates={[
+                        { latitude: initialRegion.latitude, longitude: initialRegion.longitude },
+                        { latitude: region.latitude, longitude: region.longitude }
+                    ]} />
                 </MapView>
-
             </View>
         )
     }
+}
+
+/*
+modèle: 
+
+FetchNearestFromGoogle(navigation, 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + latitude + ',' + longitude + '&radius=' + radMetter + '&type=restaurant'+ '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U')
+
+const FetchNearestRestaurantFromGoogle = ({navigation,url}) => {
+
+    const [data, setData] = useState(null);
+
+    const latitude = location.latitude; // you can update it with user's latitude & Longitude
+    const longitude = location.longitude;
+    let radMetter = 2 * 1000; // Search withing 2 KM radius
+
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + latitude + ',' + longitude + '&radius=' + radMetter + '&type=restaurant'+ '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U'
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const resp = await fetch(url);
+            const data = await resp.json();
+            setData(data)
+        }
+        fetchData()
+    }, [])
+
+    return data;
+}*/
+
+const FetchNearestRestaurantFromGoogle = (location,rayon) => {
+
+    const [data, setData] = useState(null);
+
+    const latitude = location.latitude; // you can update it with user's latitude & Longitude
+    const longitude = location.longitude;
+    let radMetter =  rayon * 1000; // Search withing 2 KM radius
+
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' +
+        latitude + ',' + longitude + '&radius=' + radMetter + '&type=restaurant' + '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U'
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const resp = await fetch(url);
+            const data = await resp.json();
+            setData(data)
+        }
+        fetchData()
+    }, [])
+
+    return data;
 }
 
 export default carte;
@@ -171,7 +203,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        padding: 10,
     },
     mapStyle: {
         width: Dimensions.get('window').width,
@@ -184,5 +218,10 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         color: 'white',
         alignContent: 'center'
-    }
+    },
+    boldText: {
+        fontSize: 25,
+        color: 'red',
+        marginVertical: 16,
+    },
 });

@@ -1,111 +1,157 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Button, SafeAreaView, FlatList, TouchableOpacity, Platform } from 'react-native';
-import { AuthContext } from '../navigation/AuthProvider';
-import Header from '../components/Header';
 import Event from '../components/Event';
+import moment from 'moment'
 import PlanifyIndicator from '../components/PlanifyIndicator';
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import * as firebase from 'firebase';
+import PushNotification from "react-native-push-notification";
+import * as SQLite from 'expo-sqlite';
 
 const calendrier = ({ route, navigation }) => {
 
   /*-------------------constantes et variables-----------------*/
-  const [ajout, setAjout] = useState(null)
-  const [events, setEvents] = useState({})
-  const [markedDates, setMarkedDate] = useState([])
-  const [calendrier, setCalendrier] = useState([{}])
+  const today = new Date().toISOString().split('T')[0]
+
+  const [markedDates, setMarkedDate] = useState({ [today]: { marked: true, selectedColor: 'blue' } })
+  const [calendrier, setCalendrier] = useState([])
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+
+  const [ajout, setAjout] = useState(null)
 
   const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
     "Octobre", "Novembre", "Décembre"];
 
   const days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+  const _format = 'YYYY-MM-DD'
 
-  const today = new Date().toISOString().split('T')[0]
+  const dbLite = SQLite.openDatabase("db.db");
 
-  const db = firebase.firestore();
-
-  /*-------------------FONCTIONS-------------------*/
-  const { user } = useContext(AuthContext);
-  const [userInfo, setUserInfo] = useState()
-
-  const getUserInfo = async () => {
-    const db = firebase.firestore();
-    const ref = db.collection("users").doc(user.uid);
-
-    ref.get().then((doc) => {
-      setUserInfo(doc.data())
+  /*--DBLITE LOCAL--*/
+  function Create() {
+    console.log("create")
+    dbLite.transaction((tx) => {
+      //tx.executeSql("CREATE TABLE IF NOT EXISTS Calendrier (date TEXT NOT NULL,eventName TEXT NOT NULL,description TEXT)")
+      tx.executeSql("INSERT INTO Calendrier (date,eventName,description) VALUES ('2021-10-11','test','arreteee')",[],
+      (tx,results) => { console.log(results)})
     })
   }
 
-  function addEventInCalendar(event, date) {
-    try {
-      return db.collection('Calendrier').add({
-        event: event,
-        date: date,
-        user: userInfo
+  function Update() {
+    //Fetch tout les données du calendrier
+    dbLite.transaction(tx => {
+      tx.executeSql(
+        "SELECT * FROM Calendrier",
+        [], (tx, result) => {
+          setCalendrier(...calendrier, result.rows._array)
+          // var temp = [];
+          // for (let i = 0; i < results.rows.length; ++i)
+          //   temp.push(results.rows.item(i));
+          console.log("Refresh",result.rowsAffected)
+          // console.log(temp)
+          // setCalendrier(temp)
+        })
+    });
+  }
+
+  function Insert(event, date) {
+    dbLite.transaction(tx => {
+      tx.executeSql("INSERT INTO Calendrier (date,eventName,description) VALUES (?,?,?)",
+        [date.toString(), event.nom.toString(), event.Description.toString()],
+        (tx, results) => {
+          console.log("Results: ", results.rowsAffected)
+          if (results.rowsAffected > 0) {
+            console.log("ajout de ", event.nom)
+          }
+          else {
+            console.log("Erreur dans l'ajout de ", event.nom)
+          }
+        }
+      )
+    });
+  }
+
+  function Remove(truck) {
+    dbLite.transaction(tx => {
+      tx.executeSql("DELETE FROM Calendrier WHERE id=(?)", [truck['id']], (tx, result) => {
+        setFavorites(favoritesList.filter(truck => truck === result.rows._array))
+      });
+    });
+  }
+
+  function Empty() {
+    dbLite.transaction(tx => {
+      tx.executeSql("DELETE FROM Calendrier")
+    })
+  }
+
+  /*--date picker */
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const showTimepicker = () => {
+    showMode('time');
+  };
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+  };
+
+  /*useEffect */
+  useEffect(() => {
+    /*sqlLite*/
+    Create();
+    Update();
+
+    /*pour supprimer la table calendrier */
+    //Empty()
+  }, []);
+
+  const onDaySelect = (day) => {
+    const selectedDay = moment(day.dateString).format(_format)
+    const arrDates = Object.keys(markedDates)
+      // .map((value, id, ssss) => ({id, value}))
+      .map((d, i) => {
+        console.log('d, i: ', markedDates.indexOf(i))
+        // const markedDay = moment(d.value).format(_format)
+        // if (_today !== markedDay) {
+        // console.log('push: ', markedDay)
+        // } else if () {
+        // console.log('splice: ', d, i)
+        // }
       })
-    } catch (e) {
-      console.log("ERREUR DANS L'AJOUT D'UN EVENT DANS LE CALENDRIER:", e)
-    }
-    finally {
-      console.log(event.nom, " ajouté dans le calendrier")
 
-    }
-  }
-
-  function editEventFromCalendar(eventId) {
-    console.log("Edit event from calendar:", eventId)
-  }
-
-  function deleteFromCalendar(eventId) {
-    console.log("Delete evetn from calendar", eventId)
-  }
-
-  /*--POUR ALLÉ CHERCHER LES ÉVÈNEMENTS DÉJÀ AJOUTÉ AU CALENDRIER */
-  const getEventsFromCalendar = async () => {
-    const response = db.collection('Calendrier');
-    const data = await response.get();
-    let tabDates = []
-    let tabEvents = []
-    let Calendrier = ([{}])
-
-    data.docs.forEach(item => {
-      // à faire avec le id wesh
-      if (item.data().user != undefined) {
-        if ((item.data().user.Email).toLowerCase() == user.email.toLowerCase()) {
-          tabDates.push((item.data().year + '-' + item.data().month + '-' + item.data().day).toString())
-          tabEvents.push(item.data().event)
-          Calendrier.push({ "date": ((item.data().year + '-' + item.data().month + '-' + item.data().day).toString()), "event": item.data().event })
-        }
-        else {
-          setEvents("Aucun évènement")
-        }
-      }
-
-    })
-
-    setMarkedDate(tabDates)
-    setEvents(tabEvents)
-    setCalendrier(Calendrier)
+    console.log('array dates: ', arrDates)
   }
 
   const AgendaPlanify = () => {
-    if (calendrier != null) {
+    if (calendrier != [] && calendrier != null) {
       return (
         <SafeAreaView style={{ flex: 1 }}>
           <Calendar
             selected={today}
             minDate={new Date()}
             markedDates={markedDates}
+            onDayPress={(day) => onDaySelect(day)}
           />
           <View style={styles.itemContainer}>
             <Text style={styles.titre}>ÉVÈNEMENTS DANS LE CALENDRIER</Text>
+            <TouchableOpacity onPress={() => Update()} style={styles.bouton}>
+              <Text>Refresh</Text>
+            </TouchableOpacity>
             <FlatList
-              data={events}
+              //data={events}
+              data={calendrier}
               refreshing={true}
               keyExtractor={item => item.id}
               renderItem={({ item }) => {
@@ -126,15 +172,6 @@ const calendrier = ({ route, navigation }) => {
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                       <Text>Planifié le </Text>
-                      {/* {
-                        item.map(function(key,value){
-                          return(
-                            <View>
-                              <Text>{value}</Text>
-                            </View>
-                          )
-                        })
-                      } */}
                     </View>
                   </View>
                 )
@@ -145,50 +182,36 @@ const calendrier = ({ route, navigation }) => {
       )
 
     }
-    else if (calendrier.size == 0 || events.length == 0) {
+    else if (calendrier == [] && calendrier == null) {
       return (
         <SafeAreaView style={{ flex: 1 }}>
           <Calendar />
           <Text>Aucuns évènements dans le calendrier</Text>
         </SafeAreaView>
-
       )
     }
   }
 
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
 
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTimepicker = () => {
-    showMode('time');
-  };
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-  };
-
-
-  useEffect(() => {
-    setUserInfo(null)
-    getUserInfo()
-    setEvents(null)
-    getEventsFromCalendar()
-  }, []);
+  /* 
+    1.Date : la date de l'evènement
+    2.Rappel : le nombre de temps que le user veut se faire rappeler qu'il a un event
+               intialiser à 1h avant.
+  */
+  function notificateTheUser(date, rappel = (Date.now() - 60 * 1000)) {
+    PushNotification.localNotificationSchedule({
+      message: "planify your week",
+      title: "Your event is coming soon!",
+      date: date - rappel
+    })
+  }
 
   /*----------------AFFICHAGE------------------*/
-  if (events == undefined || events == null)
-    return (<PlanifyIndicator />)
   /* AJOUT D'UN EVENT DANS LE CALENDRIER */
+
   if (route.params != undefined) {
     let item = route.params.event
+    // setAjout(item)
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.item}>
@@ -222,13 +245,13 @@ const calendrier = ({ route, navigation }) => {
             <View style={{ flexDirection: 'row' }}>
               <TouchableOpacity
                 style={styles.bouton}
-                onPress={() => { addEventInCalendar(item, date); item = null; navigation.navigate("Calendrier") }}>
+                onPress={() => { Insert(item, date); setAjout(null); navigation.navigate("Calendrier") }}>
                 <Text>
                   Ajouter
                 </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.bouton} onPress={() => { item = null; navigation.navigate("Calendrier") }}>
+              <TouchableOpacity style={styles.bouton} onPress={() => { setAjout(null); navigation.navigate("Calendrier") }}>
                 <Text>Annuler</Text>
               </TouchableOpacity>
             </View>
@@ -254,7 +277,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#dcdcdc'
   },
   titre: {
-    fontSize: 30
+    fontSize: 20
   },
   item: {
     backgroundColor: 'white',

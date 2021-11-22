@@ -46,4 +46,12 @@ npm install react-native-image-picker --save
 
 npm install @react-native-community/datetimepicker --save
 
+npm install --save react-native-push-notification
+
+expo install expo-sqlite
+
+--2021-11-20---
+expo install expo-camera expo-media-library
+
+npm install @react-native-community/slider --save
 

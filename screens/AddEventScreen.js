@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-nativ
 import Textarea from 'react-native-textarea';
 import * as firebase from 'firebase';
 import { AuthContext } from '../navigation/AuthProvider';
-//import Geolocation from '@react-native-community/geolocation';
+import useGeoLocation from "../utils/getGeoLocation";
 
 const AddEventScreen = ({ navigation, route }) => {
     /*
@@ -21,44 +21,31 @@ const AddEventScreen = ({ navigation, route }) => {
     const [catégorie, setCatégorie] = useState("")
     const [description, setDescription] = useState("")
     const { user, logout } = useContext(AuthContext);
-
-    // let id = route.params.id
-    // console.log(id)
-    //Geolocation.getCurrentPosition(info => console.log(info));
-    function erase() {
-        setDescription("")
-        setTitre("")
-        setCatégorie("")
-        navigation.navigate("Forum")
-    }
+    const db = firebase.firestore();
 
     function addEvent(titre, description, catégorie, user) {
-        const db = firebase.firestore();
         if (titre == "" || titre == undefined || titre == null) {
             alert("TITRE VIDE...🤔")
-            navigation.navigate("AddEventScreen")
-            return
         }
         else if (catégorie == "" || catégorie == undefined || catégorie == null) {
             alert("CATÉGORIE VIDE... 🤔")
-            navigation.navigate("AddEventScreen")
-            return
         }
-
+        //let loc = useGeoLocation()
         try {
-            return db.collection('Ajouts').add({
+            return db.collection('Ajouts').doc(titre).set({
                 nom: titre,
                 Description: description,
-                Date: new Date(),
+                Date: new Date().toISOString().split('T')[0],
                 User: user.uid,
                 Catégorie: catégorie
-                //localisation:{longitude:,latitude} de son cell
-            })
+                //localisation: loc
+            }).then(
+                console.log(titre, " add in db")
+            ).catch(
+                console.log("ERREUR DANS L'AJOUT D'UN EVENT:", e)
+            )
         } catch (e) {
             console.log("ERREUR DANS L'AJOUT D'UN EVENT:", e)
-        }
-        finally{
-            console.log(titre, " add in db")
         }
     }
 

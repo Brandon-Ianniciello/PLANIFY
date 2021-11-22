@@ -23,12 +23,12 @@ const Signup = ({navigation}) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Create an account</Text>
+            <Text style={styles.text}>Créer un compte Planify</Text>
 
             <FormInput
                 labelValue={email}
                 onChangeText={(userEmail) => setEmail(userEmail)}
-                placeholderText="Email"
+                placeholderText="Courriel"
                 iconType="user"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -38,7 +38,7 @@ const Signup = ({navigation}) => {
             <FormInput
                 labelValue={password}
                 onChangeText={(userPassword) => setPassword(userPassword)}
-                placeholderText="Password"
+                placeholderText="Mot de passe"
                 iconType="lock"
                 secureTextEntry={true}
             />
@@ -46,7 +46,7 @@ const Signup = ({navigation}) => {
             <FormInput
                 labelValue={confirmPassword}
                 onChangeText={(userPassword) => setConfirmPassword(userPassword)}
-                placeholderText="Confirm Password"
+                placeholderText="Confirmer le mot de passe"
                 iconType="lock"
                 secureTextEntry={true}
             />
@@ -55,22 +55,22 @@ const Signup = ({navigation}) => {
             </View>
 
             <FormButton
-                buttonTitle="Sign Up"
+                buttonTitle="S'enregistrer"
                 onPress={() => register(email,password)}
             />
 
             <View style={styles.textPrivate}>
                 <Text style={styles.color_textPrivate}>
-                    By registering, you confirm that you accept our{' '}
+                    En vous enregistrant, vous acceptez nos {' '}
                 </Text>
                 <TouchableOpacity onPress={() => alert('Terms Clicked!')}>
                     <Text style={[styles.color_textPrivate, { color: '#e88832' }]}>
-                        Terms of service
+                        conditions
                     </Text>
                 </TouchableOpacity>
-                <Text style={styles.color_textPrivate}> and </Text>
+                <Text style={styles.color_textPrivate}> et nos </Text>
                 <Text style={[styles.color_textPrivate, { color: '#e88832' }]}>
-                    Privacy Policy
+                    politiques
                 </Text>
             </View>
           
@@ -78,7 +78,7 @@ const Signup = ({navigation}) => {
             <TouchableOpacity
                 style={styles.navButton}
                 onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.navButtonText}>Have an account? Sign In</Text>
+                <Text style={styles.navButtonText}>Déjà un compte ? Connectez-vous ici</Text>
             </TouchableOpacity>
         </View>
     );

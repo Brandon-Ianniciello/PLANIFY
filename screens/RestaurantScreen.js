@@ -1,41 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import * as firebase from 'firebase';
-
-import EventButton from '../components/EventButton';
-import FlatListEvent from '../components/FlatListEvent';
 import PlanifyIndicator from "../components/PlanifyIndicator"
+import FlatListGoogleEvents from '../components/FlatListGoogleEvents';
 
-const RestaurantScreen = ({ navigation }) => {
-  const [restaurants, setRestaurants] = useState([])
+const RestaurantScreen = ({ route, navigation }) => {  
+  let resto = null
+  let eventClique = null
 
-  /*--aller chercher tout les festivals--*/
-  const getRestaurants = async () => {
-    const db = firebase.firestore();
-    const response = db.collection('Restaurants');
-    const data = await response.get();
-
-    let R = []
-    data.docs.forEach(item => {
-      R.push(item.data())
-    })
-    setRestaurants(R)
-  }
-
-  useEffect(() => {
-    setRestaurants(null)
-    getRestaurants()
-  }, []);
-
-  if (restaurants != null || restaurants != undefined) {
+  if(route.params!= undefined){
+    resto = route.params.event
+    eventClique = route.params.eventClique
+    /*affichage de tout les évènements proche de lui */
     return (
       <View style={styles.container}>
-        <FlatListEvent data={restaurants} nomPage={"RestaurantScreen"} navigation={navigation}/>
+        <FlatListGoogleEvents eventClique={eventClique} data={resto.results} navigation={navigation} />
       </View>)
   }
   else if (restaurants == null || restaurants == undefined) {
-    return(<PlanifyIndicator/>
-    )
+    return (<PlanifyIndicator /> )
   }
 }
 

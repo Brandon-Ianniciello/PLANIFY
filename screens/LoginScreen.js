@@ -44,7 +44,7 @@ const LoginScreen = ({ navigation }) => {
       <FormInput
         labelValue={email}
         onChangeText={(userEmail) => setEmail(userEmail)}
-        placeholderText="Email"
+        placeholderText="Courriel"
         iconType="user"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -54,13 +54,13 @@ const LoginScreen = ({ navigation }) => {
       <FormInput
         labelValue={password}
         onChangeText={(userPassword) => setPassword(userPassword)}
-        placeholderText="Password"
+        placeholderText="Mot de passe"
         iconType="lock"
         secureTextEntry={true}
       />
 
       <FormButton
-        buttonTitle="Sign In"
+        buttonTitle="Se connecter"
         onPress={() => login(email, password)}
       />
 
@@ -88,7 +88,7 @@ const LoginScreen = ({ navigation }) => {
         style={styles.forgotButton}
         onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.navButtonText}>
-          Don't have an acount? Create here
+          Pas de compte ? Créez-le ici
         </Text>
       </TouchableOpacity>
     </ScrollView>

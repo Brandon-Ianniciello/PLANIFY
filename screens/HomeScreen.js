@@ -5,6 +5,46 @@ import { View, Text, Image, ImageBackground, StyleSheet } from 'react-native'
 import { TextInput, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 
+
+/*
+--futur homgepage--
+
+const FetchNearestEvent = (rayon = 50) => {
+
+    const [data, setData] = useState(null);
+    let location = useGeoLocation()
+    const latitude = location.latitude; // you can update it with user's latitude & Longitude
+    const longitude = location.longitude;
+    let radMetter = rayon * 1000; // Search withing 2 KM radius
+
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' +
+        latitude + ',' + longitude + '&radius=' + radMetter +'&type=restaurant'+ '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U'
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const resp = await fetch(url);
+            const data = await resp.json();
+            setData(data)
+        }
+        fetchData()
+    }, [])
+
+    return data;
+}
+
+const HomeScreen = ({ navigation }) => {
+    let data = FetchNearestEvent()
+    console.log(data)
+    return (
+        <View style={styles.container}>
+            <FlatListGoogleEvents data={data.result} navigation={navigation} />
+        </View>
+    )
+}
+
+
+*/
+
 const HomeScreen = ({ navigation }) => {
 
     function divGenerator(screenName, nom, navigation, img) {

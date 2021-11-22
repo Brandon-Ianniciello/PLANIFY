@@ -35,7 +35,7 @@ const forum = ({ navigation }) => {
     <ScrollView style={{ backgroundColor: "#dcdcdc" }}>
       <View style={{
         backgroundColor: "dcdcdc", height: "10%", borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20, width: '100%', marginTop: 10
+        borderBottomRightRadius: 20, width: '100%', marginTop: 30
       }}>
 
         <View style={{ flexDirection: "row", alignItems: "center", marginTop: 50, width: "100%", paddingHorizontal: 20, paddingBottom: 100 }}>
