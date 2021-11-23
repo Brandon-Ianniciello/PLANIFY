@@ -6,10 +6,10 @@ import PlanifyIndicator from '../components/PlanifyIndicator';
 import { Calendar,Agenda } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PushNotification from "react-native-push-notification";
-import * as SQLite from 'expo-sqlite';
-import { State } from 'react-native-gesture-handler';
 import { Card } from 'react-native-paper';
-import { typography } from 'styled-system';
+import { AuthContext } from '../navigation/AuthProvider';
+import * as firebase from 'firebase';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const calendrier = ({ route, navigation }) => {
 
@@ -22,6 +22,10 @@ const calendrier = ({ route, navigation }) => {
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
+  const { user, logout } = useContext(AuthContext);
+
+  const db = firebase.firestore();
+
   const [ajout, setAjout] = useState(null)
 
   const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
@@ -30,66 +34,6 @@ const calendrier = ({ route, navigation }) => {
   const days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
   const _format = 'YYYY-MM-DD'
 
-  const dbLite = SQLite.openDatabase("db.db");
-
-  /*--DBLITE LOCAL--*/
-  function Create() {
-    console.log("create")
-    dbLite.transaction((tx) => {
-      tx.executeSql("CREATE TABLE IF NOT EXISTS Calendrier (date TEXT NOT NULL,eventName TEXT NOT NULL,description TEXT)")
-      tx.executeSql("INSERT INTO Calendrier (date,eventName,description) VALUES ('2021-11-26','test','arreteee')",[],
-      (tx,results) => { console.log('apres le create')})
-    })
-  }
-
-  function Update() {
-    //Fetch tout les données du calendrier
-    dbLite.transaction(tx => {
-      tx.executeSql(
-        "SELECT * FROM Calendrier",
-        [], (tx, result) => {
-          setCalendrier(...calendrier, result.rows._array)
-          // var temp = [];
-          // for (let i = 0; i < results.rows.length; ++i)
-          //   temp.push(results.rows.item(i));
-          console.log("Refresh",result.rowsAffected)
-          // console.log(temp)
-          // setCalendrier(temp)
-        })
-    });
-  }
-
-  function Insert(event, date) {
-    dbLite.transaction(tx => {
-      tx.executeSql("INSERT INTO Calendrier (date,eventName,description) VALUES (?,?,?)",
-        [date.toString(), event.nom.toString(), event.Description.toString()],
-        (tx, results) => {
-          console.log("Results: ", results.rowsAffected)
-          setCalendrier(...calendrier, result.rows._array)
-          if (results.rowsAffected > 0) {
-            console.log("ajout de ", event.nom)
-          }
-          else {
-            console.log("Erreur dans l'ajout de ", event.nom)
-          }
-        }
-      )
-    });
-  }
-
-  function Remove(truck) {
-    dbLite.transaction(tx => {
-      tx.executeSql("DELETE FROM Calendrier WHERE id=(?)", [truck['id']], (tx, result) => {
-        setFavorites(favoritesList.filter(truck => truck === result.rows._array))
-      });
-    });
-  }
-
-  function Empty() {
-    dbLite.transaction(tx => {
-      tx.executeSql("DELETE FROM Calendrier")
-    })
-  }
 
   /*--date picker */
   const showMode = (currentMode) => {
@@ -111,99 +55,24 @@ const calendrier = ({ route, navigation }) => {
     setDate(currentDate);
   };
 
-  /*useEffect */
-  useEffect(() => {
-    /*sqlLite*/
-    Create();
-    Update();
-
-    /*pour supprimer la table calendrier */
-    //Empty()
-  }, []);
-
-  console.log(calendrier)
-
   
-
   const onDaySelect = (day) => {
     const selectedDay = moment(day.dateString).format(_format)
     const arrDates = Object.keys(markedDates)
       // .map((value, id, ssss) => ({id, value}))
       .map((d, i) => {
         console.log('d, i: ', markedDates.indexOf(i))
-        // const markedDay = moment(d.value).format(_format)
-        // if (_today !== markedDay) {
-        // console.log('push: ', markedDay)
-        // } else if () {
-        // console.log('splice: ', d, i)
-        // }
+
       })
 
     console.log('array dates: ', arrDates)
   }
 
-  // const AgendaPlanify = () => {
-  //   if (calendrier != [] && calendrier != null) {
-  //     return (
-  //       <SafeAreaView style={{ flex: 1 }}>
-  //         <Calendar
-  //           selected={today}
-  //           minDate={new Date()}
-  //           markedDates={markedDates}
-  //           onDayPress={(day) => onDaySelect(day)}
-  //         />
-  //         <View style={styles.itemContainer}>
-  //           <Text style={styles.titre}>ÉVÈNEMENTS DANS LE CALENDRIER</Text>
-  //           <TouchableOpacity onPress={() => Update()} style={styles.bouton}>
-  //             <Text>Refresh</Text>
-  //           </TouchableOpacity>
-  //           <FlatList
-  //             //data={events}
-  //             data={calendrier}
-  //             refreshing={true}
-  //             keyExtractor={item => item.id}
-  //             renderItem={({ item }) => {
-  //               return (
-  //                 <View>
-  //                   <View style={{ flexDirection: 'column' }}>
-  //                     <View style={{ flexDirection: 'row' }}>
-  //                       <Event item={item} navigation={navigation} nomPage={"Calendrier"} userInfo={userInfo} uid={item.User} />
-  //                     </View>
-  //                     <View style={{ flexDirection: 'row' }}>
-  //                       <TouchableOpacity style={styles.bouton} onPress={() => deleteFromCalendar(item)}>
-  //                         <Text>Supprimé</Text>
-  //                       </TouchableOpacity>
-  //                       <TouchableOpacity style={styles.bouton} onPress={() => editEventFromCalendar(item)}>
-  //                         <Text>Modifié</Text>
-  //                       </TouchableOpacity>
-  //                     </View>
-  //                   </View>
-  //                   <View style={{ flexDirection: 'row' }}>
-  //                     <Text>Planifié le </Text>
-  //                   </View>
-  //                 </View>
-  //               )
-  //             }}
-  //           />
-  //         </View>
-  //       </SafeAreaView>
-  //     )
-
-  //   }
-  //   else if (calendrier == [] && calendrier == null) {
-  //     return (
-  //       <SafeAreaView style={{ flex: 1 }}>
-  //         <Calendar />
-  //         <Text>Aucuns évènements dans le calendrier</Text>
-  //       </SafeAreaView>
-  //     )
-  //   }
-  // }
-
+  
   const [items, setItems] = useState({});
 
-  const loadItems = (day) => {
-    setTimeout(() => {
+  useEffect(() => {
+    const loadItems = (day) => {
       for (let i = -15; i < 85; i++) {
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = timeToString(time);
@@ -223,7 +92,35 @@ const calendrier = ({ route, navigation }) => {
         newItems[key] = items[key];
       });
       setItems(newItems);
-    }, 100000);
+    }
+  //   const ref = db.collection("Events").doc(user.uid);
+  //   ref.get().then((doc) => {
+  //       setItems(doc.data())
+  //   })
+  //   console.log(items)
+
+  }, []);
+
+  const loadItems = (day) => {
+    for (let i = -15; i < 85; i++) {
+      const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+      const strTime = timeToString(time);
+      if (!items[strTime]) {
+        items[strTime] = [];
+        const numItems = Math.floor(Math.random() * 3 + 1);
+        for (let j = 0; j < numItems; j++) {
+          items[strTime].push({
+            name: 'Item for ' + strTime + ' #' + j,
+            height: Math.max(50, Math.floor(Math.random() * 150))
+          });
+        }
+      }
+    }
+    const newItems = {};
+    Object.keys(items).forEach(key => {
+      newItems[key] = items[key];
+    });
+    setItems(newItems);
   }
 
   const timeToString = (time) => {
@@ -233,7 +130,7 @@ const calendrier = ({ route, navigation }) => {
 
   const renderItem= (item) =>{
     return(
-      <TouchableOpacity style={[styles.item]} onPress={() => Alert.alert(item.name)}>
+      <TouchableOpacity style={[styles.item]} onPress={() => Alert.alert(item)}>
         <Card>
           <Card.Content>
             <View>
@@ -251,21 +148,21 @@ const calendrier = ({ route, navigation }) => {
 
     if (calendrier != [] && calendrier != null) {
       return (
+
         <SafeAreaView style={{ flex: 1, marginTop:'5%' }}>
+          <TouchableOpacity style={styles.refreshBouton} onPress={() => {loadItems();}}>
+            <FontAwesome name="retweet" color='#0099ff' size={20} style={{ marginBottom: 5 }} />
+          </TouchableOpacity>
           <Agenda
-            items={items
-              // '2021-11-25': [{name: 'item 1 - any js object'}],
-              // '2012-05-23': [{name: 'item 2 - any js object', height: 80}],
-              // '2012-05-24': [],
-              // '2021-11-27': [{name: 'item 3 - any js object'}, {name: 'any js object'}]
-            }
+            items={items}
 
             minDate={today}
 
-            loadItemsForMonth={loadItems}
-
             renderItem={renderItem}
- 
+
+            // loadItemsForMonth={loadItems}
+
+            selected={today}
           />
 
         </SafeAreaView>
