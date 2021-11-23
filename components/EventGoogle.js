@@ -2,8 +2,6 @@ import React, { useEffect, useContext, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Button, Image } from 'react-native';
 import EventButton from './EventButton';
 import { Rating, AirbnbRating } from 'react-native-ratings';
-import * as firebase from 'firebase';
-
 
 const EventGoogle = ({ item, navigation, nomPage }) => {
 
@@ -12,7 +10,8 @@ const EventGoogle = ({ item, navigation, nomPage }) => {
     let rating = item.rating
     let location = item.vicinity
     let type = item.types[1]
-    let photo = item.photos
+    let photo = item.photos[0]
+    const API_KEY = "AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U"
 
     return (
         <View style={styles.item}>
@@ -21,9 +20,20 @@ const EventGoogle = ({ item, navigation, nomPage }) => {
                 {/* titre */}
                 <View style={{ flexDirection: 'row', width: '100%', borderBottomColor: '#dcdcdc', borderBottomWidth: 1, alignItems: 'center' }}>
                     <Text style={styles.titre}>{name}</Text>
-                    
+
                     <View style={{ flexDirection: 'row' }}>
                     </View>
+                </View>
+
+                {/* Image */}
+                <View style={{ width: 200, height: 100 }}>
+                    <Image style={{ width: 200, height: 100 }} 
+                    source={{uri:
+                            ('https://maps.googleapis.com/maps/api/place/photo' +
+                                '?maxwidth=400' +
+                                '&photo_reference=+' + photo.photo_reference +
+                                '&key=' + API_KEY)
+                    }} />
                 </View>
                 {/* description */}
                 <View style={{ flexDirection: 'row', paddingLeft: 10, paddingTop: 10, paddingBottom: 10, width: '100%' }}>

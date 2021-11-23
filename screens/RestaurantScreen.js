@@ -5,21 +5,16 @@ import PlanifyIndicator from "../components/PlanifyIndicator"
 import FlatListGoogleEvents from '../components/FlatListGoogleEvents';
 
 const RestaurantScreen = ({ route, navigation }) => {  
-  let resto = null
-  let eventClique = null
-
   if(route.params!= undefined){
-    resto = route.params.event
-    eventClique = route.params.eventClique
-    /*affichage de tout les évènements proche de lui */
+    let resto = route.params.event
+    let eventClique = route.params.eventClique
+    let details = route.params.details
     return (
       <View style={styles.container}>
-        <FlatListGoogleEvents eventClique={eventClique} data={resto.results} navigation={navigation} />
+        <FlatListGoogleEvents eventClique={eventClique} details={details} data={resto.results} navigation={navigation} />
       </View>)
   }
-  else if (restaurants == null || restaurants == undefined) {
-    return (<PlanifyIndicator /> )
-  }
+  return (<PlanifyIndicator /> )
 }
 
 export default RestaurantScreen;

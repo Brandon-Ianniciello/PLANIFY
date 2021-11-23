@@ -1,41 +1,25 @@
-import React, { useState ,useEffect} from 'react';
-
+import React, { useState, useEffect } from 'react';
+import * as Location from 'expo-location'
 const useGeoLocation = () => {
-    const [location, setLocation] = useState({
-        loaded: false,
-        coordinates: { lat: "", lng: "" }
-    });
-
-    const onSuccess = (location) => {
-        setLocation({
-            loaded: true,
-            coordinates: {
-                lat: location.coords.latitude,
-                lng: location.coords.longitude
-            }
-        })
-    }
-    const onError = error => {
-        setLocation({
-            loaded: true,
-            error,
-        });
-    }
-
+    
+    /*coordonnées de lio*/
+    const [lat,setLat] = useState(45.642249982790126)
+    const [lng,setLng] = useState(-73.8423519855052)
+    
     useEffect(() => {
-
+        console.log("Getting the phone position...")
         if (!('geolocation' in navigator)) {
-            onError({
-                code: 0,
-                message: "Geolocation not supported"
-            });
+            alert("Geolocation not supported")
         }
-
-        navigator.geolocation.getCurrentPosition(onSuccess, onError)
-        console.log(navigator.geolocation.getCurrentPosition(onSuccess, onError))
+        Location.installWebGeolocationPolyfill()
+        navigator.geolocation.getCurrentPosition(function (position) {
+            console.log("..")
+            setLat(position.coords.latitude)
+            setLng(position.coords.longitude)
+        });
     }, [])
 
-    return location
+    return ({latitude:lat,longitude:lng})
 }
 
 export default useGeoLocation;

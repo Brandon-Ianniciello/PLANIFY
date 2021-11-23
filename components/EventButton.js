@@ -6,6 +6,22 @@ const EventButton = ({ navigation, item, nomPage }) => {
     let boutonCarte = <View></View>
     let boutonCalendrier = <View></View>
 
+    if(nomPage=="FlatListGoogle" && item.geometry != undefined){
+        boutonCarte = (
+            <View style={styles.bouton}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Carte", {
+                        nom: item.nom,
+                        page: nomPage,
+                        longitude: item.geometry.location.lng,
+                        latitude: item.geometry.location.lat
+                    })}>
+                    <Ionicons name={'md-map'} size={20} color={'gray'} />
+                </TouchableOpacity>
+            </View>
+        )
+    }
+
     if (item.localisation != undefined) {
         boutonCarte = (
             <View style={styles.bouton}>

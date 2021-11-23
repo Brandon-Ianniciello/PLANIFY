@@ -22,7 +22,12 @@ const carte = ({ route, navigation }) => {
     let longitudeEvent = initialRegion.longitude
     let nom = ""
     let page = "HomeScreen"
+
     const location = useGeoLocation();
+    const [region, setRegion] = useState({ latitude: 45.642249982790126, longitude: -73.8423519855052 })
+    const [eventSelectionné, setEventSélectionné] = useState(null)
+    const [eventDetails, setDetails] = useState(null)
+    const [distance, setDistance] = useState(30)//30km
 
     let nearestRestaurant = FetchNearestRestaurantFromGoogle(location,distance);
 
@@ -37,14 +42,6 @@ const carte = ({ route, navigation }) => {
         if (route.params.page != undefined)
             page = route.params.page
     }
-    
-    const [pin, setPin] = useState({ latitude: 45.642249982790126, longitude: -73.8423519855052 })
-    const [region, setRegion] = useState({ latitude: 45.642249982790126, longitude: -73.8423519855052 })
-    const [eventSelectionné, setEventSélectionné] = useState(null)
-    const [distance, setDistance] = useState(30)//30km
-
-    // const [distancePoint,setDistancePoint] = useState({ distance: )
-
     //si le user a cliqué sur "Trouver sur la carte"
     if (évènement != undefined || évènement != null) {
         initialRegion.latitude = latitudeEvent
@@ -79,10 +76,8 @@ const carte = ({ route, navigation }) => {
                     placeholder='Recherche'
                     fetchDetails={true}
                     onPress={(data, details = null) => {
-                        // 'details' is provided when fetchDetails = true
-                        //console.log(data, details);
-                        console.log(data)
                         setEventSélectionné(data)
+                        setDetails(details)
                         setRegion({
                             latitude: details.geometry.location.lat,
                             longitude: details.geometry.location.lng,
@@ -91,9 +86,6 @@ const carte = ({ route, navigation }) => {
                         })
                         initialRegion.latitude = region.latitude
                         initialRegion.longitude = region.longitude
-                        //console.log(nearestRestaurant);
-                        //console.log(location.loaded ? JSON.stringify(location): "Location data not available yet")
-                        //console.log(location);
                     }}
                     query={{
                         key: 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U',
@@ -134,7 +126,7 @@ const carte = ({ route, navigation }) => {
                     provider='google'>
                     <MapView.Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }}
                         onPress={() => {
-                            navigation.navigate("RestaurantScreen", { event: nearestRestaurant, eventClique: eventSelectionné })
+                            navigation.navigate("RestaurantScreen", { event: nearestRestaurant, eventClique: eventSelectionné,details:eventDetails })
                         }}
                     />
                     <Polyline coordinates={[
@@ -178,10 +170,10 @@ const FetchNearestRestaurantFromGoogle = (location,rayon) => {
 
     const [data, setData] = useState(null);
 
-    const latitude = location.latitude; // you can update it with user's latitude & Longitude
+    const latitude = location.latitude;
     const longitude = location.longitude;
-    let radMetter =  rayon * 1000; // Search withing 2 KM radius
-
+    
+    let radMetter =  rayon * 1000;
     const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' +
         latitude + ',' + longitude + '&radius=' + radMetter + '&type=restaurant' + '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U'
 
