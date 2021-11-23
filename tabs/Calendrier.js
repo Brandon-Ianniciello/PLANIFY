@@ -1,12 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, Button, SafeAreaView, FlatList, TouchableOpacity, Platform } from 'react-native';
+import React, { useState, useEffect, useContext, Component } from 'react';
+import { View, Text, StyleSheet, Button, SafeAreaView, FlatList, TouchableOpacity, Platform, Alert } from 'react-native';
 import Event from '../components/Event';
 import moment from 'moment'
 import PlanifyIndicator from '../components/PlanifyIndicator';
-import { Calendar } from 'react-native-calendars';
+import { Calendar,Agenda } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PushNotification from "react-native-push-notification";
 import * as SQLite from 'expo-sqlite';
+import { State } from 'react-native-gesture-handler';
+import { Card } from 'react-native-paper';
+import { typography } from 'styled-system';
 
 const calendrier = ({ route, navigation }) => {
 
@@ -33,9 +36,9 @@ const calendrier = ({ route, navigation }) => {
   function Create() {
     console.log("create")
     dbLite.transaction((tx) => {
-      //tx.executeSql("CREATE TABLE IF NOT EXISTS Calendrier (date TEXT NOT NULL,eventName TEXT NOT NULL,description TEXT)")
-      tx.executeSql("INSERT INTO Calendrier (date,eventName,description) VALUES ('2021-10-11','test','arreteee')",[],
-      (tx,results) => { console.log(results)})
+      tx.executeSql("CREATE TABLE IF NOT EXISTS Calendrier (date TEXT NOT NULL,eventName TEXT NOT NULL,description TEXT)")
+      tx.executeSql("INSERT INTO Calendrier (date,eventName,description) VALUES ('2021-11-26','test','arreteee')",[],
+      (tx,results) => { console.log('apres le create')})
     })
   }
 
@@ -62,6 +65,7 @@ const calendrier = ({ route, navigation }) => {
         [date.toString(), event.nom.toString(), event.Description.toString()],
         (tx, results) => {
           console.log("Results: ", results.rowsAffected)
+          setCalendrier(...calendrier, result.rows._array)
           if (results.rowsAffected > 0) {
             console.log("ajout de ", event.nom)
           }
@@ -117,6 +121,10 @@ const calendrier = ({ route, navigation }) => {
     //Empty()
   }, []);
 
+  console.log(calendrier)
+
+  
+
   const onDaySelect = (day) => {
     const selectedDay = moment(day.dateString).format(_format)
     const arrDates = Object.keys(markedDates)
@@ -134,53 +142,134 @@ const calendrier = ({ route, navigation }) => {
     console.log('array dates: ', arrDates)
   }
 
+  // const AgendaPlanify = () => {
+  //   if (calendrier != [] && calendrier != null) {
+  //     return (
+  //       <SafeAreaView style={{ flex: 1 }}>
+  //         <Calendar
+  //           selected={today}
+  //           minDate={new Date()}
+  //           markedDates={markedDates}
+  //           onDayPress={(day) => onDaySelect(day)}
+  //         />
+  //         <View style={styles.itemContainer}>
+  //           <Text style={styles.titre}>ÉVÈNEMENTS DANS LE CALENDRIER</Text>
+  //           <TouchableOpacity onPress={() => Update()} style={styles.bouton}>
+  //             <Text>Refresh</Text>
+  //           </TouchableOpacity>
+  //           <FlatList
+  //             //data={events}
+  //             data={calendrier}
+  //             refreshing={true}
+  //             keyExtractor={item => item.id}
+  //             renderItem={({ item }) => {
+  //               return (
+  //                 <View>
+  //                   <View style={{ flexDirection: 'column' }}>
+  //                     <View style={{ flexDirection: 'row' }}>
+  //                       <Event item={item} navigation={navigation} nomPage={"Calendrier"} userInfo={userInfo} uid={item.User} />
+  //                     </View>
+  //                     <View style={{ flexDirection: 'row' }}>
+  //                       <TouchableOpacity style={styles.bouton} onPress={() => deleteFromCalendar(item)}>
+  //                         <Text>Supprimé</Text>
+  //                       </TouchableOpacity>
+  //                       <TouchableOpacity style={styles.bouton} onPress={() => editEventFromCalendar(item)}>
+  //                         <Text>Modifié</Text>
+  //                       </TouchableOpacity>
+  //                     </View>
+  //                   </View>
+  //                   <View style={{ flexDirection: 'row' }}>
+  //                     <Text>Planifié le </Text>
+  //                   </View>
+  //                 </View>
+  //               )
+  //             }}
+  //           />
+  //         </View>
+  //       </SafeAreaView>
+  //     )
+
+  //   }
+  //   else if (calendrier == [] && calendrier == null) {
+  //     return (
+  //       <SafeAreaView style={{ flex: 1 }}>
+  //         <Calendar />
+  //         <Text>Aucuns évènements dans le calendrier</Text>
+  //       </SafeAreaView>
+  //     )
+  //   }
+  // }
+
+  const [items, setItems] = useState({});
+
+  const loadItems = (day) => {
+    setTimeout(() => {
+      for (let i = -15; i < 85; i++) {
+        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+        const strTime = timeToString(time);
+        if (!items[strTime]) {
+          items[strTime] = [];
+          const numItems = Math.floor(Math.random() * 3 + 1);
+          for (let j = 0; j < numItems; j++) {
+            items[strTime].push({
+              name: 'Item for ' + strTime + ' #' + j,
+              height: Math.max(50, Math.floor(Math.random() * 150))
+            });
+          }
+        }
+      }
+      const newItems = {};
+      Object.keys(items).forEach(key => {
+        newItems[key] = items[key];
+      });
+      setItems(newItems);
+    }, 100000);
+  }
+
+  const timeToString = (time) => {
+    const date = new Date(time);
+    return date.toISOString().split('T')[0];
+  }
+
+  const renderItem= (item) =>{
+    return(
+      <TouchableOpacity style={[styles.item]} onPress={() => Alert.alert(item.name)}>
+        <Card>
+          <Card.Content>
+            <View>
+              <Text>
+                {item.name}
+              </Text>
+            </View>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
+    )
+  }
+
   const AgendaPlanify = () => {
+
     if (calendrier != [] && calendrier != null) {
       return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <Calendar
-            selected={today}
-            minDate={new Date()}
-            markedDates={markedDates}
-            onDayPress={(day) => onDaySelect(day)}
-          />
-          <View style={styles.itemContainer}>
-            <Text style={styles.titre}>ÉVÈNEMENTS DANS LE CALENDRIER</Text>
-            <TouchableOpacity onPress={() => Update()} style={styles.bouton}>
-              <Text>Refresh</Text>
-            </TouchableOpacity>
-            <FlatList
-              //data={events}
-              data={calendrier}
-              refreshing={true}
-              keyExtractor={item => item.id}
-              renderItem={({ item }) => {
-                return (
-                  <View>
-                    <View style={{ flexDirection: 'column' }}>
-                      <View style={{ flexDirection: 'row' }}>
-                        <Event item={item} navigation={navigation} nomPage={"Calendrier"} userInfo={userInfo} uid={item.User} />
-                      </View>
-                      <View style={{ flexDirection: 'row' }}>
-                        <TouchableOpacity style={styles.bouton} onPress={() => deleteFromCalendar(item)}>
-                          <Text>Supprimé</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.bouton} onPress={() => editEventFromCalendar(item)}>
-                          <Text>Modifié</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                    <View style={{ flexDirection: 'row' }}>
-                      <Text>Planifié le </Text>
-                    </View>
-                  </View>
-                )
-              }}
-            />
-          </View>
-        </SafeAreaView>
-      )
+        <SafeAreaView style={{ flex: 1, marginTop:'5%' }}>
+          <Agenda
+            items={items
+              // '2021-11-25': [{name: 'item 1 - any js object'}],
+              // '2012-05-23': [{name: 'item 2 - any js object', height: 80}],
+              // '2012-05-24': [],
+              // '2021-11-27': [{name: 'item 3 - any js object'}, {name: 'any js object'}]
+            }
 
+            minDate={today}
+
+            loadItemsForMonth={loadItems}
+
+            renderItem={renderItem}
+ 
+          />
+
+        </SafeAreaView>
+      ) 
     }
     else if (calendrier == [] && calendrier == null) {
       return (
@@ -191,7 +280,6 @@ const calendrier = ({ route, navigation }) => {
       )
     }
   }
-
 
   /* 
     1.Date : la date de l'evènement
@@ -281,10 +369,11 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: 'white',
-    borderColor: 'black',
-    borderWidth: 5,
-    margin: '5%',
-    flexDirection: 'column'
+    flex: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginRight: 10,
+    marginTop: 17
   },
   itemContainer: {
     backgroundColor: 'white',
