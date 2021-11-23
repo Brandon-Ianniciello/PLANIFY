@@ -121,8 +121,8 @@ const Event = ({ item, navigation, nomPage, userInfo, uid }) => {
 
     return (
         <View style={styles.item}>
-            <View style={{ flexDirection: 'column' }}>
-                <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'column', width: '100%' }}>
+                <View style={{ flexDirection: 'row', width: '100%' }}>
                     {infosUser}
                 </View>
                 {/* titre */}
