@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
                                 id:uid              
                             })
                         })
-                        console.log('account reegistered!')
+                        console.log('account registered!')
                         setErrorRegister(null)
                     } catch (e) {
                         setErrorRegister(e)

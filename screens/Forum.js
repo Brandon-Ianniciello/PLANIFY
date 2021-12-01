@@ -34,11 +34,11 @@ const forum = ({ navigation }) => {
   return (
     <ScrollView style={{ backgroundColor: "#dcdcdc" }}>
       <View style={{
-        backgroundColor: "dcdcdc", height: "10%", borderBottomLeftRadius: 20,
+        backgroundColor: "dcdcdc", height: "12%", borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20, width: '100%', 
       }}>
 
-        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 20, width: "100%", paddingHorizontal: 20, paddingBottom: 100 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 70, width: "100%", paddingHorizontal: 20, paddingBottom: 100 }}>
           {/* Texte d'accueil du forum */}
           <View style={{ width: "50%", backgroundColor: "#dcdcdc" }}>
             <Text style={{

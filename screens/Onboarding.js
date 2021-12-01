@@ -26,13 +26,13 @@ const OnboardingScreen = ({ navigation }) => {
                 backgroundColor: '#A6E4D0',
                 image: <Image style={styles.images} source={require('../assets/CalendarV3.png')}></Image>,
                 title: 'Planification',
-                subtitle: 'Planifiez des activités avec vos amis'
+                subtitle: 'Planifiez des activités rapidement'
             },
             {
                 backgroundColor: '#E9BCBE',
                 image: <Image style={styles.images} source={require('../assets/Cellphone.png')}></Image>,
-                title: 'Faciliter',
-                subtitle: "Vous pouvez faire tout cela avec seulement l'aide de votre cellulaire"
+                title: 'Simplicité',
+                subtitle: "Vous pouvez faire cela avec seulement l'aide de votre téléphone intelligent"
             }
         ]}
         />

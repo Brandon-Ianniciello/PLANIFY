@@ -153,7 +153,7 @@ const HomeScreen = ({ navigation, route }) => {
                 <View>
                     <View style={{ flexDirection: "row", paddingHorizontal: 20, width: "100%", alignItems: "center" }}>
                         <View style={{ width: "50%" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 17, color: "#585a61" }}>FESTIVALS</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 17, color: "#585a61" }}>ACTIVITÉS</Text>
                             <View style={{
                                 height: 4,
                                 backgroundColor: "b1e5d3",
