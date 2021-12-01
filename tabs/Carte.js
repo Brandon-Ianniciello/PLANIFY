@@ -6,7 +6,27 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import useGeoLocation from '../utils/getGeoLocation';
 import Slider from '@react-native-community/slider';
 
-const API_KEY = "AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U"
+const fetchData = (location, distance, type) => {
+    const [data, setData] = useState(null);
+    const API_KEY = "AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U"
+    const latitude = location.latitude;
+    const longitude = location.longitude;
+    let radMetter = distance * 1000;
+
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' +
+        latitude + ',' + longitude + '&radius=' + radMetter + '&type=' + type + '&key=' + API_KEY
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const resp = await fetch(url);
+            const data = await resp.json();
+            setData(data)
+        }
+
+        fetchData()
+    }, [])
+    return data;
+}
 
 const carte = ({ route, navigation }) => {
 
@@ -17,23 +37,24 @@ const carte = ({ route, navigation }) => {
         longitudeDelta: 0.05
     }
 
-    let évènement = null
+    let évènement = route.params
     let latitudeEvent = initialRegion.latitude
     let longitudeEvent = initialRegion.longitude
     let nom = ""
     let page = "HomeScreen"
 
-    const location = useGeoLocation();
+    const API_KEY = "AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U"
+    
     const [region, setRegion] = useState({ latitude: 45.642249982790126, longitude: -73.8423519855052 })
-    const [eventSelectionné, setEventSélectionné] = useState(null)
+    const [eventSelectionné, setEventSélectionné] = useState()
     const [eventDetails, setDetails] = useState(null)
     const [distance, setDistance] = useState(30)//30km
 
-    let nearestRestaurant = FetchNearestRestaurantFromGoogle(location,distance);
+    const location = useGeoLocation()
+    let defaut = fetchData(location,distance,'establishment')
 
     if (route.params != undefined) {
-        évènement = route.params
-        if (route.params.latitude != undefined || route.params.longitude != undefined) {
+        if (route.params.latitude != undefined && route.params.longitude != undefined) {
             latitudeEvent = route.params.latitude
             longitudeEvent = route.params.longitude
         }
@@ -42,7 +63,6 @@ const carte = ({ route, navigation }) => {
         if (route.params.page != undefined)
             page = route.params.page
     }
-    //si le user a cliqué sur "Trouver sur la carte"
     if (évènement != undefined || évènement != null) {
         initialRegion.latitude = latitudeEvent
         initialRegion.longitude = longitudeEvent
@@ -78,6 +98,8 @@ const carte = ({ route, navigation }) => {
                     onPress={(data, details = null) => {
                         setEventSélectionné(data)
                         setDetails(details)
+                        console.log("DETAILS:",details)
+                        console.log("EVENT SÉLECTIONNER",data)
                         setRegion({
                             latitude: details.geometry.location.lat,
                             longitude: details.geometry.location.lng,
@@ -126,7 +148,7 @@ const carte = ({ route, navigation }) => {
                     provider='google'>
                     <MapView.Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }}
                         onPress={() => {
-                            navigation.navigate("RestaurantScreen", { event: nearestRestaurant, eventClique: eventSelectionné,details:eventDetails })
+                            navigation.navigate("HomeScreen", { event: defaut,eventClique:eventSelectionné,details:eventDetails})
                         }}
                     />
                     <Polyline coordinates={[
@@ -137,56 +159,6 @@ const carte = ({ route, navigation }) => {
             </View>
         )
     }
-}
-
-/*
-modèle: 
-
-FetchNearestFromGoogle(navigation, 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + latitude + ',' + longitude + '&radius=' + radMetter + '&type=restaurant'+ '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U')
-
-const FetchNearestRestaurantFromGoogle = ({navigation,url}) => {
-
-    const [data, setData] = useState(null);
-
-    const latitude = location.latitude; // you can update it with user's latitude & Longitude
-    const longitude = location.longitude;
-    let radMetter = 2 * 1000; // Search withing 2 KM radius
-
-    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + latitude + ',' + longitude + '&radius=' + radMetter + '&type=restaurant'+ '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U'
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const resp = await fetch(url);
-            const data = await resp.json();
-            setData(data)
-        }
-        fetchData()
-    }, [])
-
-    return data;
-}*/
-
-const FetchNearestRestaurantFromGoogle = (location,rayon) => {
-
-    const [data, setData] = useState(null);
-
-    const latitude = location.latitude;
-    const longitude = location.longitude;
-    
-    let radMetter =  rayon * 1000;
-    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' +
-        latitude + ',' + longitude + '&radius=' + radMetter + '&type=restaurant' + '&key=' + 'AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U'
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const resp = await fetch(url);
-            const data = await resp.json();
-            setData(data)
-        }
-        fetchData()
-    }, [])
-
-    return data;
 }
 
 export default carte;

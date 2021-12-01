@@ -6,6 +6,17 @@ const useGeoLocation = () => {
     const [lat,setLat] = useState(45.642249982790126)
     const [lng,setLng] = useState(-73.8423519855052)
     
+    // const onSuccess = (location) => {
+    //     setLat(position.coords.latitude)
+    //     setLng(position.coords.longitude)
+    // }
+    // const onError = error => {
+    //     setLocation({
+    //         loaded: true,
+    //         error,
+    //     });
+    // }
+
     useEffect(() => {
         console.log("Getting the phone position...")
         if (!('geolocation' in navigator)) {
@@ -13,7 +24,6 @@ const useGeoLocation = () => {
         }
         Location.installWebGeolocationPolyfill()
         navigator.geolocation.getCurrentPosition(function (position) {
-            console.log("..")
             setLat(position.coords.latitude)
             setLng(position.coords.longitude)
         });

@@ -44,9 +44,6 @@ export const AuthProvider = ({ children }) => {
                                 Password:password,
                                 isAdmin:false,
                                 id:uid              
-                            }),
-                            db.collection('Events').doc(uid).set({
-                                
                             })
                         })
                         console.log('account reegistered!')

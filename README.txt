@@ -56,3 +56,7 @@ expo install expo-camera expo-media-library
 npm install @react-native-community/slider --save
 
 expo install expo-location
+
+expo install @react-native-picker/picker
+
+npm install react-native-easy-content-loader --save

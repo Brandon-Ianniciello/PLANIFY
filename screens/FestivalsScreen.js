@@ -1,45 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import FlatListGoogleEvents from '../components/FlatListGoogleEvents';
+import PlanifyIndicator from '../components/PlanifyIndicator';
+import useGeoLocation from '../utils/getGeoLocation';
+import EventGoogle from '../components/EventGoogle';
 
-import GetData from '../utils/GetData';
+const FestivalsScreen = ({ route, navigation }) => {
 
-import * as firebase from 'firebase';
+  let distance = 30//30km
+  const [amusementPark, setParks] = useState(null)
 
-import FlatListEvent from '../components/FlatListEvent';
-import PlanifyIndicator from "../components/PlanifyIndicator";
+  const location = useGeoLocation()
 
-const FestivalsScreen = ({ navigation,route }) => {
-  //Création de la base de données
-  const [festivals, setFestivals] = useState([])
+  const API_KEY = "AIzaSyA4BtUvJDZEH-CFXNFbjNO-bI5He2Zlm3U"
 
-  const getFestivals = async () => {
-    const db = firebase.firestore();
-    const response = db.collection('Festivals');
-    const data = await response.get();
-    let F = []
-    data.docs.forEach(item => {
-      F.push(item.data())
-    })
-    setFestivals(F)
-  }
+  const latitude = location.latitude;
+  const longitude = location.longitude;
 
-  useEffect(() => {
-    setFestivals(null)
-    getFestivals()
-  }, []);
+  let radMetter = distance * 1000;
 
-  if (festivals != undefined || festivals != null) {
+  const urlParks = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' +
+    latitude + ',' + longitude + '&radius=' + radMetter + '&type=' + 'amusement_park' + '&key=' + API_KEY
+
+  useEffect(async () => {
+    const rP = await fetch(urlParks);
+    const dP = await rP.json();
+    setParks(dP)
+  }, [])
+
+  if (amusementPark != undefined ) {
     return (
-      <View>
-        <FlatListEvent data={festivals} navigation={navigation} nomPage={"FestivalsScreen"} />
-      </View>
+      <ScrollView>
+        <View style={styles.liste}>
+          <Text style={{ fontSize: 20, paddingLeft: 5, fontWeight: 'bold', marginTop: 10 }}>Centres d'amusements proches</Text>
+          <FlatList
+            data={amusementPark.results}
+            refreshing={true}
+            renderItem={({ item }) => {
+              return (
+                <EventGoogle item={item} navigation={navigation} nomPage={"FlatListGoogle"} />
+              )
+            }
+            }
+          />
+        </View>
+      </ScrollView>
     )
   }
-  else if (festivals == undefined || festivals == null) {
-    return(<PlanifyIndicator/>)
+  else if (amusementPark == null || amusementPark == undefined) {
+    return (<PlanifyIndicator />
+    )
   }
 }
-
 
 export default FestivalsScreen;
 
@@ -48,5 +60,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  liste: {
+    flexDirection: "column",
+    backgroundColor: '#dcdcdc'
   }
 });

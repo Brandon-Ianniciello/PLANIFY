@@ -17,7 +17,6 @@ const FlatListGoogleEvents = ({ eventClique, details, data, navigation }) => {
         description = eventClique.description
     }
     if (details != undefined) {
-        console.log(details.photos)
         image = (
             'https://maps.googleapis.com/maps/api/place/photo' +
             '?maxwidth=400' +
@@ -45,6 +44,7 @@ const FlatListGoogleEvents = ({ eventClique, details, data, navigation }) => {
                             renderItem={({ item }) => {
                                 return (
                                     <View>
+                                        <Text>{item.width}</Text>
                                         <Image style={{ width: 200, height: 100 }} source={{
                                             uri:
                                                 ('https://maps.googleapis.com/maps/api/place/photo' +

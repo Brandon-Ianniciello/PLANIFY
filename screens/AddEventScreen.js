@@ -21,28 +21,27 @@ const AddEventScreen = ({ navigation, route }) => {
     const [catégorie, setCatégorie] = useState("")
     const [description, setDescription] = useState("")
     const { user, logout } = useContext(AuthContext);
+    const loc = useGeoLocation()
+
     const db = firebase.firestore();
 
-    function addEvent(titre, description, catégorie, user) {
+    function addEvent(titre, description, catégorie) {
         if (titre == "" || titre == undefined || titre == null) {
             alert("TITRE VIDE...🤔")
         }
         else if (catégorie == "" || catégorie == undefined || catégorie == null) {
             alert("CATÉGORIE VIDE... 🤔")
         }
-        //let loc = useGeoLocation()
         try {
             return db.collection('Ajouts').doc(titre).set({
                 nom: titre,
                 Description: description,
                 Date: new Date().toISOString().split('T')[0],
                 User: user.uid,
-                Catégorie: catégorie
-                //localisation: loc
+                Catégorie: catégorie,
+                localisation: loc
             }).then(
                 console.log(titre, " add in db")
-            ).catch(
-                console.log("ERREUR DANS L'AJOUT D'UN EVENT:", e)
             )
         } catch (e) {
             console.log("ERREUR DANS L'AJOUT D'UN EVENT:", e)
@@ -85,7 +84,7 @@ const AddEventScreen = ({ navigation, route }) => {
                 placeholderTextColor={'#c7c7c7'}
                 underlineColorAndroid={'transparent'}
             />
-            <TouchableOpacity style={styles.bouton} onPress={() => { addEvent(titre, description, catégorie, user); navigation.navigate('Forum') }}>
+            <TouchableOpacity style={styles.bouton} onPress={() => { addEvent(titre, description, catégorie); navigation.navigate('Forum') }}>
                 <Text>Ajouter</Text>
             </TouchableOpacity>
         </View>

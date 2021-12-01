@@ -9,6 +9,7 @@ import IdéeDateScreen from "../screens/IdéeDateScreen";
 import RestaurantScreen from "../screens/RestaurantScreen";
 import PartyScreen from "../screens/PartyScreen";
 import carte from "../tabs/Carte";
+import HomeScreen from "../screens/HomeScreen";
 
 const Carte = createStackNavigator();
 
@@ -18,6 +19,11 @@ const AppStack = () => {
             <Carte.Screen
                 name="Carte"
                 component={carte}
+                options={{ headerShown: false }}
+            />
+            <Carte.Screen
+                name="HomeScreen"
+                component={HomeScreen}
                 options={{ headerShown: false }}
             />
             <Carte.Screen

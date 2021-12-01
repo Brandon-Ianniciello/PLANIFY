@@ -5,48 +5,30 @@ import Textarea from 'react-native-textarea';
 import * as firebase from 'firebase';
 import { AuthContext } from '../navigation/AuthProvider';
 
+const EditEventScreen = ({ route, navigation,userInfo }) => {
+    const [event, setEventInfo] = useState(route.params.event)
+    const [ancienTitre, setAncienTitre] = useState(route.params.event.nom)
+    const [titre, setTitre] = useState(route.params.event.nom)
+    const [description, setDescription] = useState(route.params.event.Description)
+    const [catégorie, setCatégorie] = useState(route.params.event.Catégorie)
 
-const EditEventScreen = ({ route, navigation }) => {
-    /*
-        1.Titre de l'évènement
-        2.Date
-        3.Id du user, mais cachée
-        4.Contenu
-        5.image, facultatif
-        6.Description
-        7.Localisation
-    */
-
-    const [event, setEventInfo] = useState()
-    const { id } = route.params
-    const [titre, setTitre] = useState("")
-    const [description, setDescription] = useState("")
-    const [catégorie, setCatégorie] = useState("")
-    const { user, logout } = useContext(AuthContext);
-    const db = firebase.firestore();
-
-    function editEvent(id, titre, description, catégorie, user) {
+    function editEvent(titre, description, catégorie, userInfo) {
         const db = firebase.firestore();
-        return db.collection('Ajouts').doc(id).set({
+
+        db.collection('Ajouts').doc(ancienTitre).set({
             Description: description,
             nom: titre,
             Catégorie: catégorie,
             Date: new Date(),
-            user: user.uid
+            user: userInfo.id
         })
     }
 
     function setValues() {
-        console.log(event)
-    }
-
-    const getEventInfo = () => {
-        setEventInfo(null)
-        const ref = db.collection("Ajouts").doc(id);
-        ref.get().then((doc) => {
-            setEventInfo(doc.data())
-        })
-        setValues()
+        setAncienTitre(event.nom)
+        setCatégorie(event.Catégorie)
+        setTitre(event.nom)
+        setDescription(event.Description)
     }
 
     function erase() {
@@ -57,7 +39,9 @@ const EditEventScreen = ({ route, navigation }) => {
     }
 
     useEffect(() => {
-        getEventInfo()
+        if (route.params != undefined)
+            setEventInfo(route.params.event)
+        //charge les infos de l'event
         setValues()
     }, []);
 
@@ -97,7 +81,7 @@ const EditEventScreen = ({ route, navigation }) => {
                 placeholderTextColor={'#c7c7c7'}
                 underlineColorAndroid={'transparent'}
             />
-            <TouchableOpacity style={styles.bouton} onPress={() => { editEvent(id, titre, description, catégorie, user); erase() }}>
+            <TouchableOpacity style={styles.bouton} onPress={() => { editEvent(titre, description, catégorie, userInfo); erase() }}>
                 <Text>Modifier</Text>
             </TouchableOpacity>
         </View>

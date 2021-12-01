@@ -94,6 +94,7 @@ const Profil = ({navigation}) => {
         let placeholderCity = "City"
         let placeholderCountry = "Country"
 
+
         return (
             <SafeAreaView style={styles.container}>
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
@@ -250,7 +251,8 @@ export default Profil;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        marginTop:20
     },
     profileInfos: {
         marginTop: 16,
